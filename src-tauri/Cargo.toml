@@ -1,0 +1,39 @@
+[package]
+name = "rust-reader"
+version = "0.0.1"
+description = "A Tauri App"
+authors = ["you"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "1", features = [] }
+
+[dependencies]
+tauri = { version = "1", features = [
+    "protocol-asset",
+    "dialog-all",
+    "window-start-dragging",
+    "window-close",
+    "window-minimize",
+    "window-maximize",
+    "window-hide",
+    "window-unmaximize",
+    "window-unminimize",
+    "window-show",
+    "shell-open",
+] }
+serde = { version = "1", features = ["derive"] }
+serde_yml = "0.0.7"
+serde_json = "1"
+epub = "2.1"
+window-shadows = "0.2.1"
+scraper = "0.19.0"
+crypto-hash = "0.3.4"
+mime = "0.3.17"
+lazy_static = "1.4.0"
+
+[features]
+# This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]
