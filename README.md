@@ -1,16 +1,16 @@
-# Tauri + Vue 3 + TypeScript
+# Rust-Reader
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Rust-Reader 是一个简单、轻量、美观的 Epub 阅读器，由 Rust、Vue 和 TypeScript 编写，使用 Tauri 框架构建。
 
-## Recommended IDE Setup
+该项目还在快速迭代中，欢迎大家参与讨论和贡献。更详细的文档将在稍后发布。
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## 运行环境
 
-## Type Support For `.vue` Imports in TS
+该项目尚未测试过其他操作系统或Rust版本，以下是开发时环境：
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
+- Rust 1.77.1
+- Windows 11
 
-1. Run `Extensions: Show Built-in Extensions` from VS Code's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
+## 免责申明
 
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+本软件遵循 MIT 协议，您可以自由使用、修改和分发，请遵守你所在地区的本地法律，原作者不对使用本软件造成的任何后果负责。
