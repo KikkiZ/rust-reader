@@ -1,0 +1,23 @@
+# $USER$ 替换为当前用户名
+
+# Windows的默认配置
+# book:
+#   info: "C:\\Users\\$USER$\\AppData\\Local\\Reader\\book_info.json"
+#   dir: "C:\\Users\\$USER$\\AppData\\Local\\Reader\\book"
+#   cover: "C:\\Users\\$USER$\\AppData\\Local\\Reader\\cover"
+#   resources: "C:\\Users\\$USER$\\AppData\\Local\\Reader\\resources"
+# theme:
+#   appearance: Light
+# setting:
+#   sidebar: True
+
+# Linux的默认配置
+# book:
+#   info: "/home/$USER$/.Reader/book_info.json"
+#   dir: "/home/$USER$/.Reader/book"
+#   cover: "/home/$USER$/.Reader/cover"
+#   resources: "/home/$USER$/.Reader/resources"
+# theme:
+#   appearance: Light
+# setting:
+#   sidebar: True
