@@ -60,136 +60,6 @@ pub fn open_book(id: &str) -> String {
     }
 }
 
-/// 获取上一章
-///
-/// 返回一个Json Object:
-/// {
-///     "content": string,
-///     "exist": boolean,
-///     "error": string
-/// }
-#[tauri::command]
-pub fn prev_page() -> String {
-    let mut result = HashMap::new();
-
-    unsafe {
-        match CURRENT_BOOK.as_mut() {
-            Some(book) => {
-                if book.go_prev() {
-                    result.insert("content", book.get_current_page());
-                    result.insert("exist", String::from("true"));
-                } else {
-                    let msg = Notification {
-                        r#type: NotificationType::Warn,
-                        title: "WARN".to_string(),
-                        msg: "No previous page".to_string(),
-                    };
-                    result.insert("msg", json(&msg));
-                    result.insert("exist", String::from("false"));
-                }
-            }
-            None => {
-                // TODO:
-                // 1. Log error
-                // 2. 完善错误信息
-                let msg = Notification {
-                    r#type: NotificationType::Err,
-                    title: "Error".to_string(),
-                    msg: "Has not open any book".to_string(),
-                };
-                result.insert("msg", json(&msg));
-                result.insert("exist", String::from("false"));
-            }
-        }
-    }
-
-    json(&result)
-}
-
-/// 获取下一章
-///
-/// 返回一个Json Object:
-/// {
-///     "content": string,
-///     "exist": boolean,
-///     "error": string
-/// }
-#[tauri::command]
-pub fn next_page() -> String {
-    let mut result = HashMap::new();
-
-    unsafe {
-        match CURRENT_BOOK.as_mut() {
-            Some(book) => {
-                if book.go_next() {
-                    result.insert("content", book.get_current_page());
-                    result.insert("exist", String::from("true"));
-                } else {
-                    let msg = Notification {
-                        r#type: NotificationType::Warn,
-                        title: "WARN".to_string(),
-                        msg: "No next page".to_string(),
-                    };
-                    result.insert("msg", json(&msg));
-                    result.insert("exist", String::from("false"));
-                }
-            }
-            None => {
-                // TODO:
-                // 1. Log error
-                // 2. 完善错误信息
-                let msg = Notification {
-                    r#type: NotificationType::Err,
-                    title: "Error".to_string(),
-                    msg: "Has not open any book".to_string(),
-                };
-                result.insert("msg", json(&msg));
-                result.insert("exist", String::from("false"));
-            }
-        }
-    }
-
-    json(&result)
-}
-
-#[tauri::command]
-pub fn jump_to_chapter(chapter: usize) -> String {
-    let mut result = HashMap::new();
-
-    unsafe {
-        match CURRENT_BOOK.as_mut() {
-            Some(book) => {
-                if book.set_current_page(chapter) {
-                    result.insert("content", book.get_current_page());
-                    result.insert("exist", String::from("true"));
-                } else {
-                    let msg = Notification {
-                        r#type: NotificationType::Warn,
-                        title: "WARN".to_string(),
-                        msg: "Page not found".to_string(),
-                    };
-                    result.insert("msg", json(&msg));
-                    result.insert("exist", String::from("false"));
-                }
-            }
-            None => {
-                // TODO:
-                // 1. Log error
-                // 2. 完善错误信息
-                let msg = Notification {
-                    r#type: NotificationType::Err,
-                    title: "Error".to_string(),
-                    msg: "Has not open any book".to_string(),
-                };
-                result.insert("msg", json(&msg));
-                result.insert("exist", String::from("false"));
-            }
-        }
-    }
-
-    json(&result)
-}
-
 /// 添加新书
 ///
 /// 参数: Vec<&str> 新书路径
@@ -249,15 +119,20 @@ fn save_cover(info: &BookInfo, book: &mut EpubDoc<BufReader<File>>) {
     let (cover, mime) = book.get_cover().unwrap();
 
     let mime: mime::Mime = mime.parse().unwrap();
-    let cover_path =
-        GLOBAL_CONFIG.book.cover.clone() + "\\" + info.id.as_str() + "." + mime.subtype().as_str();
+    let mut path = PathBuf::from(GLOBAL_CONFIG.book.cover.clone());
+    let cover_name = info.id.clone() + "." + mime.subtype().as_str();
+    path.push(cover_name);
 
-    let mut file = File::create(cover_path).unwrap();
+    println!("{:?}", path);
+    // TODO: 新建文件错误, 需要手动处理错误, 否则会panic
+    let mut file = File::create(path).unwrap();
     let _ = file.write_all(&cover);
 }
 
 fn save_book(info: &BookInfo, path: &str) {
-    let book_path = GLOBAL_CONFIG.book.dir.clone() + "\\" + info.id.as_str() + ".epub";
+    let book_name = info.id.clone() + ".epub";
+    let mut book_path = PathBuf::from(GLOBAL_CONFIG.book.dir.clone());
+    book_path.push(book_name);
 
     let mut src_file = File::open(path).unwrap();
     let mut dest_file = File::create(book_path).unwrap();
@@ -299,42 +174,6 @@ fn save_resources(info: &BookInfo, book: &mut EpubDoc<BufReader<File>>) {
 #[tauri::command]
 pub fn search_book(key: &str) {
     println!("{}", key);
-}
-
-/// 获取书籍目录
-///
-/// 返回一个Json Object：
-/// {
-///     "catalog": string,
-///     "success": boolean,
-///     "error": string
-/// }
-#[tauri::command]
-pub fn get_book_catalog() -> String {
-    let mut result: HashMap<&str, String> = HashMap::new();
-
-    unsafe {
-        match CURRENT_BOOK.as_mut() {
-            Some(book) => {
-                result.insert("catalog", json(&book.get_catalog()));
-                result.insert("success", String::from("true"));
-            }
-            None => {
-                // TODO:
-                // 1. Log error
-                // 2. 完善错误信息
-                let error = Notification {
-                    r#type: NotificationType::Err,
-                    title: "Error".to_string(),
-                    msg: "Has not open any book".to_string(),
-                };
-                result.insert("error", json(&error));
-                result.insert("success", String::from("false"));
-            }
-        }
-    }
-
-    json(&result)
 }
 
 #[tauri::command]
