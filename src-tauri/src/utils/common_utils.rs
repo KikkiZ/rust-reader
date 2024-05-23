@@ -37,7 +37,7 @@ pub fn hash(path: &PathBuf) -> String {
         .join("")
 }
 
-pub fn json<T>(data: &T) -> String
+pub fn json_to_string<T>(data: &T) -> String
 where
     T: Serialize,
 {

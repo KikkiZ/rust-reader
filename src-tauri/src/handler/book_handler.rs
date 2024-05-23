@@ -14,7 +14,7 @@ use crate::{
         notification::{Notification, NotificationType},
     },
     utils::{
-        common_utils::{json, time_stamp},
+        common_utils::{json_to_string, time_stamp},
         config_utils::GLOBAL_CONFIG,
     },
 };
@@ -112,7 +112,7 @@ pub fn update_new_book(paths: Vec<&str>) -> String {
         })
     }
 
-    json(&messages)
+    json_to_string(&messages)
 }
 
 fn save_cover(info: &BookInfo, book: &mut EpubDoc<BufReader<File>>) {
@@ -184,7 +184,7 @@ pub fn get_css() -> String {
         match CURRENT_BOOK.as_mut() {
             Some(book) => {
                 let css_list = book.get_css();
-                result.insert("css", json(&css_list));
+                result.insert("css", json_to_string(&css_list));
                 result.insert("success", String::from("true"));
             }
             None => {
@@ -193,5 +193,5 @@ pub fn get_css() -> String {
         }
     }
 
-    json(&result)
+    json_to_string(&result)
 }

@@ -3,7 +3,7 @@ use serde_json::json;
 
 use crate::{
     entity::notification::{Notification, NotificationType},
-    utils::common_utils::json,
+    utils::common_utils::json_to_string,
 };
 
 use super::CURRENT_BOOK;
@@ -46,7 +46,7 @@ pub fn get_book_catalog() -> String {
         }
     }
 
-    json(&result)
+    json_to_string(&result)
 }
 
 /// 获取上一章
@@ -100,8 +100,7 @@ pub fn prev_page() -> String {
         }
     }
 
-    println!("{}", json(&result));
-    json(&result)
+    json_to_string(&result)
 }
 
 /// 获取下一章
@@ -155,7 +154,7 @@ pub fn next_page() -> String {
         }
     }
 
-    json(&result)
+    json_to_string(&result)
 }
 
 /// 跳转到指定的章节
@@ -211,5 +210,5 @@ pub fn jump_to_chapter(chapter: usize) -> String {
         }
     }
 
-    json(&result)
+    json_to_string(&result)
 }
