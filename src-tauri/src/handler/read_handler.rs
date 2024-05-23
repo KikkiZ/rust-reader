@@ -54,7 +54,7 @@ pub fn get_book_catalog() -> String {
 /// 返回一个Json Object:
 /// {
 ///     "content": string,
-///     "exist": boolean,
+///     "success": boolean,
 ///     "msg": string
 /// }
 #[tauri::command]
@@ -66,7 +66,7 @@ pub fn prev_page() -> String {
             Some(book) => {
                 if book.go_prev() {
                     result = json!({
-                        "exist": true,
+                        "success": true,
                         "content": book.get_current_page(),
                     });
                 } else {
@@ -77,7 +77,7 @@ pub fn prev_page() -> String {
                     };
 
                     result = json!({
-                        "exist": false,
+                        "success": false,
                         "msg": msg,
                     });
                 }
@@ -93,7 +93,7 @@ pub fn prev_page() -> String {
                 };
 
                 result = json!({
-                    "exist": false,
+                    "success": false,
                     "msg": msg,
                 })
             }
@@ -108,7 +108,7 @@ pub fn prev_page() -> String {
 /// 返回一个Json Object:
 /// {
 ///     "content": string,
-///     "exist": boolean,
+///     "success": boolean,
 ///     "msg": string
 /// }
 #[tauri::command]
@@ -120,7 +120,7 @@ pub fn next_page() -> String {
             Some(book) => {
                 if book.go_next() {
                     result = json!({
-                        "exist": true,
+                        "success": true,
                         "content": book.get_current_page(),
                     });
                 } else {
@@ -131,7 +131,7 @@ pub fn next_page() -> String {
                     };
 
                     result = json!({
-                        "exist": false,
+                        "success": false,
                         "msg": msg,
                     });
                 }
@@ -147,7 +147,7 @@ pub fn next_page() -> String {
                 };
 
                 result = json!({
-                    "exist": false,
+                    "success": false,
                     "msg": msg,
                 });
             }
@@ -164,7 +164,7 @@ pub fn next_page() -> String {
 /// 返回一个 Json Object：
 /// {
 ///     "content": string,
-///     "exist": boolean,
+///     "success": boolean,
 ///     "msg": string
 /// }
 #[tauri::command]
@@ -176,7 +176,7 @@ pub fn jump_to_chapter(chapter: usize) -> String {
             Some(book) => {
                 if book.set_current_page(chapter) {
                     result = json!({
-                        "exist": true,
+                        "success": true,
                         "content": book.get_current_page(),
                     });
                 } else {
@@ -187,7 +187,7 @@ pub fn jump_to_chapter(chapter: usize) -> String {
                     };
 
                     result = json!({
-                        "exist": false,
+                        "success": false,
                         "msg": msg,
                     });
                 }
@@ -203,7 +203,7 @@ pub fn jump_to_chapter(chapter: usize) -> String {
                 };
 
                 result = json!({
-                    "exist": false,
+                    "success": false,
                     "msg": msg,
                 });
             }

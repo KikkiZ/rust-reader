@@ -1,11 +1,11 @@
 use std::{
-    collections::HashMap,
     fs::{create_dir_all, File},
     io::{BufReader, Read, Write},
     path::{Path, PathBuf},
 };
 
 use epub::doc::EpubDoc;
+use serde_json::json;
 
 use crate::{
     entity::{
@@ -21,28 +21,19 @@ use crate::{
 
 use super::CURRENT_BOOK;
 
-// TODO: useless function
-#[tauri::command]
-pub fn click(id: &str) -> String {
-    let books = BookInfo::get_info_list();
-    let book = books.iter().find(|&book| book.id == id).unwrap();
-
-    unsafe {
-        CURRENT_BOOK = Some(Epub::new(&book.file_path));
-
-        return CURRENT_BOOK.as_mut().unwrap().get_current_page();
-    }
-}
-
 /// 打开书籍
 ///
 /// 参数: id
 ///
-/// 返回: 当前页面
-///
-/// TODO: 调整返回值
+/// 返回一个Json Object:
+/// {
+///     "content": string,
+///     "success": boolean,
+///     "msg": string
+/// }
 #[tauri::command]
 pub fn open_book(id: &str) -> String {
+    let result;
     let mut books = BookInfo::get_info_list();
 
     match books.iter_mut().find(|book| book.id == id) {
@@ -54,10 +45,27 @@ pub fn open_book(id: &str) -> String {
             CURRENT_BOOK = Some(book);
 
             BookInfo::save_info_list(&books); // 保存更新后的信息
-            return CURRENT_BOOK.as_mut().unwrap().get_current_page();
+
+            result = json!({
+                "success": true,
+                "content": CURRENT_BOOK.as_mut().unwrap().get_current_page(),
+            });
         },
-        None => panic!("No such book"),
+        None => {
+            let msg = Notification {
+                r#type: NotificationType::Err,
+                title: "Error".to_string(),
+                msg: "No such book".to_string(),
+            };
+
+            result = json!({
+                "success": false,
+                "msg": msg,
+            });
+        }
     }
+
+    json_to_string(&result)
 }
 
 /// 添加新书
@@ -108,7 +116,7 @@ pub fn update_new_book(paths: Vec<&str>) -> String {
         messages.push(Notification {
             r#type: NotificationType::Info,
             title: "Info".to_string(),
-            msg: format!("Update {} success.", title_list.join(", ")),
+            msg: format!("Update [{}] success.", title_list.join(", ")),
         })
     }
 
@@ -176,19 +184,32 @@ pub fn search_book(key: &str) {
     println!("{}", key);
 }
 
+/// 获取当前打开书本的 css 文件
+/// 
+/// 返回一个 Json Object：
+/// {
+///     "css": string,
+///     "success": boolean,
+/// }
 #[tauri::command]
 pub fn get_css() -> String {
-    let mut result = HashMap::new();
+    let result;
 
     unsafe {
         match CURRENT_BOOK.as_mut() {
             Some(book) => {
                 let css_list = book.get_css();
-                result.insert("css", json_to_string(&css_list));
-                result.insert("success", String::from("true"));
+
+                result = json!({
+                    "success": true,
+                    "css": css_list,
+                });
             }
             None => {
-                result.insert("success", String::from("false"));
+                // TODO: 增加返回的信息
+                result = json!({
+                    "success": false,
+                });
             }
         }
     }

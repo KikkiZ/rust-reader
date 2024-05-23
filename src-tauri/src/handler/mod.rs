@@ -7,7 +7,6 @@ pub mod read_handler;
 
 pub fn get_handlers() -> impl Fn(tauri::Invoke) {
     tauri::generate_handler![
-        book_handler::click,
         book_handler::open_book,
         book_handler::update_new_book,
         book_handler::search_book,
