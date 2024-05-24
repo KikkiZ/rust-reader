@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { nextTick, onMounted, ref, watch } from "vue";
 import { invoke } from "@tauri-apps/api/tauri";
 
 import router from "@/router";
@@ -31,8 +31,8 @@ watch(
     (new_value, old_value) => {
         console.log(new_value, old_value)
         const list = catalog_list.value.children;
-        list[new_value].classList.add("current")
-        list[old_value].classList.remove("current")
+        list[new_value].classList.add("current");
+        list[old_value].classList.remove("current");
     },
 )
 
@@ -46,12 +46,19 @@ async function show(flag: boolean) {
 }
 
 const catalog = ref<Array<String>[]>([]);
+
+// 刷新目录
+// 只有在 appStateStore.current_book_id 发生改变或首次打开
+// 书本时会调用该方法, 因此, 需要给目录第一项添加 current 类
 async function refresh_catalog() {
     const result: string = await invoke("get_book_catalog");
     const { catalog: catalog_data, success, msg } = JSON.parse(result);
 
     if (success) {
         catalog.value = catalog_data;
+        nextTick(() => {
+            catalog_list.value.children[0].classList.add("current");
+        })
     } else {
         eventBus.emit("notices", msg)
     }

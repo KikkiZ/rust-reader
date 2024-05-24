@@ -5,7 +5,7 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useAppStateStore } from "@/store/appStateStore";
 import { useSettingStore } from "@/store/settingStore";
 import eventBus from "@/utils/eventBus";
-import appendURL from "@/utils/commonUtils";
+import appendPath from "@/utils/commonUtils";
 
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
@@ -21,7 +21,13 @@ watch(
     () => appStateStore.current_chapter,
     async new_value => {
         const result: string = await invoke("jump_to_chapter", { chapter: new_value });
-        page_refresh(result);
+        const { content, success, msg } = JSON.parse(result);
+
+        if (success) {
+            contentString.value = content;
+        } else {
+            eventBus.emit("notices", JSON.parse(msg));
+        }
     }
 )
 
@@ -37,24 +43,35 @@ function show(flag: boolean) {
 let contentString = ref("");
 async function prev_page() {
     const result: string = await invoke("prev_page");
-    page_refresh(result);
+    const { content, success, msg } = JSON.parse(result);
+
+    if (success) {
+        contentString.value = content;
+        appStateStore.current_chapter -= 1;
+    } else {
+        eventBus.emit("notices", JSON.parse(msg));
+    }
 }
 
 async function next_page() {
     const result: string = await invoke("next_page");
-    page_refresh(result);
+    const { content, success, msg } = JSON.parse(result);
+
+    if (success) {
+        contentString.value = content;
+        appStateStore.current_chapter += 1;
+    } else {
+        eventBus.emit("notices", JSON.parse(msg));
+    }
 }
 
 async function open_book(id: string) {
     const result: string = await invoke("open_book", { id: id });
-    page_refresh(result);
-}
-
-function page_refresh(data: string) {
-    const { content, success, msg } = JSON.parse(data);
+    const { content, success, msg } = JSON.parse(result);
 
     if (success) {
         contentString.value = content;
+        appStateStore.current_chapter = 0;
     } else {
         eventBus.emit("notices", JSON.parse(msg));
     }
@@ -98,24 +115,21 @@ function traversal(node: HTMLElement | ChildNode) {
             element = element as HTMLImageElement;
 
             let target = element.src.substring(7);
-            // target = resource_path.value + "\\" + target;
-            target = appendURL(resource_path.value, target);
+            target = appendPath(resource_path.value, target);
 
             element.src = convertFileSrc(target);
         } else if (element.hasAttribute("href")) {
             element = element as HTMLAnchorElement;
 
             let target = element.href.substring(7);
-            // target = resource_path.value + "\\" + target;
-            target = appendURL(resource_path.value, target);
+            target = appendPath(resource_path.value, target);
 
             element.href = convertFileSrc(target);
         } else if (element.hasAttribute("xlink:href")) {
             element = element as unknown as SVGImageElement;
 
             let target = element.href.baseVal.substring(7);
-            // target = resource_path.value + "\\" + target;
-            target = appendURL(resource_path.value, target);
+            target = appendPath(resource_path.value, target);
 
             element.href.baseVal = convertFileSrc(target);
         }
@@ -133,8 +147,8 @@ const resource_path = ref("");
 const dynamic_css = ref<string[]>([]);
 onMounted(async () => {
     resource_path.value = await invoke("get_resource_path");
-    resource_path.value = appendURL(resource_path.value, appStateStore.current_book_id);
-    
+    resource_path.value = appendPath(resource_path.value, appStateStore.current_book_id);
+
     show(settingStore.show_side_bar);
     open_book(appStateStore.current_book_id);
 
@@ -151,7 +165,7 @@ onMounted(async () => {
 
             style_tag.id = key;
             style_tag.innerHTML = css[key];
-            
+
             head.appendChild(style_tag);
         }
     }
