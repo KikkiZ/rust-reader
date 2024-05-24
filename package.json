@@ -13,12 +13,14 @@
     "@tauri-apps/api": "^1.5.3",
     "mitt": "^3.0.1",
     "pinia": "^2.1.7",
+    "ua-parser-js": "^1.0.37",
     "vue": "^3.3.4",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1",
     "@types/node": "^20.12.7",
+    "@types/ua-parser-js": "^0.7.39",
     "@vitejs/plugin-vue": "^5.0.4",
     "typescript": "^5.0.2",
     "vite": "^5.0.0",
