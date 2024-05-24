@@ -4,6 +4,7 @@ import { invoke, convertFileSrc } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
 
 import BookInfo from '../entity/bookInfo';
+import eventBus from '@/utils/eventBus';
 
 async function update_book() {
     const selected = await open({
@@ -32,7 +33,14 @@ async function get_book_list() {
 }
 
 async function item_click(id: string) {
-    content.value = await invoke("open_book", { id: id });
+    const result: string = await invoke("open_book", { id: id });
+    const { content, success, msg } = JSON.parse(result);
+
+    if (success) {
+        content.value = content;
+    } else {
+        eventBus.emit("notices", JSON.parse(msg));
+    }
 }
 
 onMounted(() => get_book_list());

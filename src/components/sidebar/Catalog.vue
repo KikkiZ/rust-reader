@@ -42,7 +42,6 @@ async function show(flag: boolean) {
         sidebar.value.style.display = "none";
     } else {
         sidebar.value.style.display = "block";
-        // update_list_hight();
     }
 }
 
@@ -50,10 +49,9 @@ const catalog = ref<Array<String>[]>([]);
 async function refresh_catalog() {
     const result: string = await invoke("get_book_catalog");
     const { catalog: catalog_data, success, msg } = JSON.parse(result);
-    if (success === "true") {
-        console.log(catalog_data)
-        catalog.value = JSON.parse(catalog_data);
 
+    if (success) {
+        catalog.value = catalog_data;
     } else {
         eventBus.emit("notices", msg)
     }
@@ -64,7 +62,6 @@ function back() {
 }
 
 onMounted(() => {
-    // console.log("sidebar mounted")
     show(settingStore.show_side_bar);
     refresh_catalog();
 })

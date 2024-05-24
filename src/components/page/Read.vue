@@ -4,8 +4,8 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 import { useAppStateStore } from "@/store/appStateStore";
 import { useSettingStore } from "@/store/settingStore";
-import Notification from "@/entity/notification";
 import eventBus from "@/utils/eventBus";
+import appendURL from "@/utils/commonUtils";
 
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
@@ -21,14 +21,7 @@ watch(
     () => appStateStore.current_chapter,
     async new_value => {
         const result: string = await invoke("jump_to_chapter", { chapter: new_value });
-        // console.log(result)
-        const { content, exist } = JSON.parse(result);
-
-        if (exist === "true") {
-            contentString.value = content;
-        }
-        // const result: string = await invoke("jump_to_chapter", { chapter: new_value });
-        // const { seccuss, content } = JSON.parse(result);
+        page_refresh(result);
     }
 )
 
@@ -44,29 +37,27 @@ function show(flag: boolean) {
 let contentString = ref("");
 async function prev_page() {
     const result: string = await invoke("prev_page");
-    const { content, exist, msg } = JSON.parse(result);
-
-    if (exist === "true") {
-        contentString.value = content;
-    } else {
-        console.log(JSON.parse(msg) as Notification)
-        eventBus.emit("notices", JSON.parse(msg) as Notification);
-    }
+    page_refresh(result);
 }
 
 async function next_page() {
     const result: string = await invoke("next_page");
-    const { content, exist, msg } = JSON.parse(result);
+    page_refresh(result);
+}
 
-    if (exist === "true") {
+async function open_book(id: string) {
+    const result: string = await invoke("open_book", { id: id });
+    page_refresh(result);
+}
+
+function page_refresh(data: string) {
+    const { content, success, msg } = JSON.parse(data);
+
+    if (success) {
         contentString.value = content;
     } else {
         eventBus.emit("notices", JSON.parse(msg));
     }
-}
-
-async function open_book(id: string) {
-    contentString.value = await invoke("open_book", { id: id });
 }
 
 watch(
@@ -107,21 +98,24 @@ function traversal(node: HTMLElement | ChildNode) {
             element = element as HTMLImageElement;
 
             let target = element.src.substring(7);
-            target = resource_path.value + "\\" + target;
+            // target = resource_path.value + "\\" + target;
+            target = appendURL(resource_path.value, target);
 
             element.src = convertFileSrc(target);
         } else if (element.hasAttribute("href")) {
             element = element as HTMLAnchorElement;
 
             let target = element.href.substring(7);
-            target = resource_path.value + "\\" + target;
+            // target = resource_path.value + "\\" + target;
+            target = appendURL(resource_path.value, target);
 
             element.href = convertFileSrc(target);
         } else if (element.hasAttribute("xlink:href")) {
             element = element as unknown as SVGImageElement;
 
             let target = element.href.baseVal.substring(7);
-            target = resource_path.value + "\\" + target;
+            // target = resource_path.value + "\\" + target;
+            target = appendURL(resource_path.value, target);
 
             element.href.baseVal = convertFileSrc(target);
         }
@@ -139,25 +133,25 @@ const resource_path = ref("");
 const dynamic_css = ref<string[]>([]);
 onMounted(async () => {
     resource_path.value = await invoke("get_resource_path");
-    resource_path.value = resource_path.value + "\\" + appStateStore.current_book_id;
-
+    resource_path.value = appendURL(resource_path.value, appStateStore.current_book_id);
+    
     show(settingStore.show_side_bar);
     open_book(appStateStore.current_book_id);
 
     // 动态加载css
     const result: string = await invoke("get_css");
     const { success, css } = JSON.parse(result);
-    if (success === "true") {
-        const parsed_css = JSON.parse(css);
-        dynamic_css.value = Object.keys(parsed_css);
+
+    if (success) {
+        dynamic_css.value = Object.keys(css);
 
         let head = document.head;
         for (const key of dynamic_css.value) {
             let style_tag = document.createElement("style");
 
             style_tag.id = key;
-            style_tag.innerHTML = parsed_css[key];
-
+            style_tag.innerHTML = css[key];
+            
             head.appendChild(style_tag);
         }
     }
