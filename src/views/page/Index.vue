@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from "vue";
 
-import { useSettingStore } from '@/store/settingStore';
+import { useSettingStore } from "@/store/settingStore";
 
 const settingStore = useSettingStore();
 

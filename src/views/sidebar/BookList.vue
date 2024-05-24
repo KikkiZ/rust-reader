@@ -6,8 +6,8 @@ import { open } from "@tauri-apps/api/dialog";
 import BookInfo from "@/entity/bookInfo";
 import Notification from "@/entity/notification";
 import router from "@/router";
-import { useSettingStore } from "@/store/settingStore";
 import eventBus from "@/utils/eventBus";
+import { useSettingStore } from "@/store/settingStore";
 import { useAppStateStore } from "@/store/appStateStore";
 
 const settingStore = useSettingStore();

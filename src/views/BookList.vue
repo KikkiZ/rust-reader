@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { invoke, convertFileSrc } from '@tauri-apps/api/tauri';
-import { open } from '@tauri-apps/api/dialog';
+import { onMounted, ref } from "vue";
+import { invoke, convertFileSrc } from "@tauri-apps/api/tauri";
+import { open } from "@tauri-apps/api/dialog";
 
-import BookInfo from '../entity/bookInfo';
-import eventBus from '@/utils/eventBus';
+import BookInfo from "@/entity/bookInfo";
+import eventBus from "@/utils/eventBus";
 
 async function update_book() {
     const selected = await open({
