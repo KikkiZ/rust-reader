@@ -49,22 +49,23 @@ pub struct BookInfo {
 impl BookInfo {
     pub fn new(path: PathBuf) -> Self {
         let hash_code = hash(&path);
-        // println!("{}", hash_code);
         let mut book = EpubDoc::new(path).unwrap();
-        let file_path =
-            std::env::var("APPDATA").unwrap() + "\\Reader\\book\\" + &hash_code + ".epub";
+
+        let mut file_path = PathBuf::from(GLOBAL_CONFIG.book.dir.clone());
+        file_path.push(hash_code.clone() + ".epub");
+
         let cover_data = book.get_cover().unwrap();
         let mime: mime::Mime = cover_data.1.parse().unwrap();
         let subtype = mime.subtype().as_str();
-        let cover_path =
-            std::env::var("APPDATA").unwrap() + "\\Reader\\cover\\" + &hash_code + "." + subtype;
+        let mut cover_path = PathBuf::from(GLOBAL_CONFIG.book.cover.clone());
+        cover_path.push(hash_code.clone() + "." + subtype);
 
         let metadata = book.metadata.clone();
 
         BookInfo {
             id: hash_code,
-            file_path: PathBuf::from(file_path),
-            cover_path: PathBuf::from(cover_path),
+            file_path,
+            cover_path,
             title: get_value(&metadata, "title"),
             creator: get_value(&metadata, "creator"),
             date: get_value(&metadata, "date"),
