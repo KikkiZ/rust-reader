@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
+import { invoke } from "@tauri-apps/api/tauri";
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 import { useAppStateStore } from "@/store/appStateStore";
 import { useSettingStore } from "@/store/settingStore";
 import eventBus from "@/utils/eventBus";
 import appendPath from "@/utils/commonUtils";
+import parseToCommonStyle from "@/core/contentParser";
 
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
@@ -87,9 +88,7 @@ watch(
                 return;
             }
 
-            for (const content of contents) {
-                traversal(content);
-            }
+            parseToCommonStyle(contents, resource_path.value);
 
             // 滚动到顶部
             window.scrollTo({
@@ -100,47 +99,6 @@ watch(
     },
     { deep: true },
 );
-
-function traversal(node: HTMLElement | ChildNode) {
-    let element;
-    if (node.nodeType === Node.ELEMENT_NODE) {
-        element = node as HTMLElement;
-    }
-
-    let children = node.childNodes;
-    if (children.length === 0 && element !== undefined) {
-
-        // console.log(element.nodeType, element.nodeName, element.nodeValue)
-        if (element.hasAttribute("src")) {
-            element = element as HTMLImageElement;
-
-            let target = element.src.substring(7);
-            target = appendPath(resource_path.value, target);
-
-            element.src = convertFileSrc(target);
-        } else if (element.hasAttribute("href")) {
-            element = element as HTMLAnchorElement;
-
-            let target = element.href.substring(7);
-            target = appendPath(resource_path.value, target);
-
-            element.href = convertFileSrc(target);
-        } else if (element.hasAttribute("xlink:href")) {
-            element = element as unknown as SVGImageElement;
-
-            let target = element.href.baseVal.substring(7);
-            target = appendPath(resource_path.value, target);
-
-            element.href.baseVal = convertFileSrc(target);
-        }
-
-        return;
-    }
-
-    for (const current of children) {
-        traversal(current);
-    }
-}
 
 const resource_path = ref("");
 
