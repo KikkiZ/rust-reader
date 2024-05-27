@@ -8,7 +8,6 @@ fn main() {
     // println!("{:?}", GLOBAL_CONFIG.theme);
     // println!("{:?}", GLOBAL_CONFIG.setting);
 
-    // println!("{:?}", book_info);
     tauri::Builder::default()
         .setup(|app| {
             set_window_shadow(app);

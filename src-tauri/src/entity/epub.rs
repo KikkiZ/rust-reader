@@ -110,9 +110,8 @@ impl Epub {
     pub fn set_current_page(&mut self, num: usize) -> bool {
         // self.data.get_num_pages()获取到的是resources的数量,
         // 而该数量与真实的章节数量是不同的, 无法使用该方法获取章节总数
-        // if num <= self.data.get_num_pages() {
+        // if num <= self.data.get_num_pages()
 
-        println!("{}", num);
         if num < self.catalog.len() {
             self.current_page = num;
 

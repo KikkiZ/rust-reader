@@ -1,5 +1,7 @@
 use crate::utils::config_utils::GLOBAL_CONFIG;
 
+// TODO: 调整接口的返回值
+
 #[tauri::command]
 pub fn get_config() -> String {
     let config = GLOBAL_CONFIG.clone();
