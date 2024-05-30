@@ -6,7 +6,7 @@ import { useAppStateStore } from "@/store/appStateStore";
 import { useSettingStore } from "@/store/settingStore";
 import eventBus from "@/utils/eventBus";
 import appendPath from "@/utils/commonUtils";
-import parseToCommonStyle from "@/core/contentParser";
+import { ParseType, Parser } from "@/core/contentParser";
 
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
@@ -32,7 +32,7 @@ watch(
     }
 )
 
-let main = ref();
+const main = ref();
 function show(flag: boolean) {
     if (flag) {
         main.value.style.marginLeft = 250 + "px";
@@ -41,7 +41,7 @@ function show(flag: boolean) {
     }
 }
 
-let contentString = ref("");
+const contentString = ref("");
 async function prev_page() {
     const result: string = await invoke("prev_page");
     const { content, success, msg } = JSON.parse(result);
@@ -82,13 +82,7 @@ watch(
     () => contentString.value,
     () => {
         nextTick().then(() => {
-            let contents = document.getElementById("content")?.children;
-
-            if (contents === undefined) {
-                return;
-            }
-
-            parseToCommonStyle(contents, resource_path.value);
+            contentParser.value?.contentParse();
 
             // 滚动到顶部
             window.scrollTo({
@@ -100,43 +94,20 @@ watch(
     { deep: true },
 );
 
-const resource_path = ref("");
-
-const dynamic_css = ref<string[]>([]);
+const contentParser = ref<Parser>();
 onMounted(async () => {
-    resource_path.value = await invoke("get_resource_path");
-    resource_path.value = appendPath(resource_path.value, appStateStore.current_book_id);
+    // TODO: 调整接口用法
+    const path: string = await invoke("get_resource_path");
+    const resource_path = appendPath(path, appStateStore.current_book_id);
 
     show(settingStore.show_side_bar);
     open_book(appStateStore.current_book_id);
 
-    // 动态加载css
-    const result: string = await invoke("get_css");
-    const { success, css } = JSON.parse(result);
-
-    if (success) {
-        dynamic_css.value = Object.keys(css);
-
-        let head = document.head;
-        for (const key of dynamic_css.value) {
-            let style_tag = document.createElement("style");
-
-            style_tag.id = key;
-            style_tag.innerHTML = css[key];
-
-            head.appendChild(style_tag);
-        }
-    }
+    contentParser.value = new Parser(resource_path, ParseType.Optimize);
 });
 
 onBeforeUnmount(() => {
-    let head = document.head;
-    for (const key of dynamic_css.value) {
-        let style_tag = document.getElementById(key);
-        if (style_tag) {
-            head.removeChild(style_tag);
-        }
-    }
+    contentParser.value?.release();
 });
 </script>
 
