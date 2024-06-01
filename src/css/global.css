@@ -6,8 +6,6 @@
 
     color: #0f0f0f;
     background-color: #f6f6f6;
-    /* border-radius: 10px; */
-    /* border: 1px solid #e8e8e8; */
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -15,8 +13,6 @@
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
 }
-
-
 
 .row {
     display: flex;
@@ -109,7 +105,6 @@ button {
     padding: 16px;
 
     display: flex;
-    /* display: inline-block; */
 }
 
 .book-list-item:hover {
@@ -136,16 +131,6 @@ button {
     width: 80%;
 }
 
-/* .book-list-item  > .item-title {
-    display: inline-block;
-} */
-
-
-
-/* .titlebar-button:hover {
-    background: #5bbec3;
-} */
-
 html {
     margin: 0;
     padding: 0;
@@ -154,15 +139,8 @@ html {
 body {
     margin: 0;
     padding: 0;
-    /* width: 640px;
-    height: 128px; */
-    /* border-radius: 10px; */
-    /* background-color: #0f0f0f; */
 }
 
-::-webkit-scrollbar {
-    display: none;
-}
 
 .mt-8 {
     margin-top: 8px;
@@ -173,14 +151,45 @@ body {
 }
 
 .sidebar {
-	width: 250px;
-	height: 100%;
-	display: none;
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
+    width: 250px;
+    height: 100%;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
 
-	background-color: white;
-	border-right: 1px solid #e8e8e8;
+    background-color: white;
+    border-right: 1px solid #e8e8e8;
+}
+
+/* 全局滚动条样式 */
+::-webkit-scrollbar {
+    display: none;
+    width: 7px;
+    height: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #e1ddddc7;
+    border-radius: 7px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #cecacac7;
+}
+
+::-webkit-scrollbar-button {
+    display: block;
+    height: 7px;
+    width: 7px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #3b3c46;
+    border-radius: 7px;
 }
