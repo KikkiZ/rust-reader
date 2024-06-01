@@ -11,6 +11,10 @@ import { ParseType, Parser } from "@/core/contentParser";
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
 
+const main = ref();
+const contentString = ref("");
+const contentParser = ref<Parser>();
+
 watch(
     () => settingStore.show_side_bar,
     new_value => {
@@ -30,9 +34,24 @@ watch(
             eventBus.emit("notices", JSON.parse(msg));
         }
     }
-)
+);
 
-const main = ref();
+watch(
+    () => contentString.value,
+    () => {
+        nextTick().then(() => {
+            contentParser.value?.contentParse();
+
+            // 滚动到顶部
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+            });
+        });
+    },
+    { deep: true },
+);
+
 function show(flag: boolean) {
     if (flag) {
         main.value.style.marginLeft = 250 + "px";
@@ -41,7 +60,6 @@ function show(flag: boolean) {
     }
 }
 
-const contentString = ref("");
 async function prev_page() {
     const result: string = await invoke("prev_page");
     const { content, success, msg } = JSON.parse(result);
@@ -78,23 +96,6 @@ async function open_book(id: string) {
     }
 }
 
-watch(
-    () => contentString.value,
-    () => {
-        nextTick().then(() => {
-            contentParser.value?.contentParse();
-
-            // 滚动到顶部
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth',
-            });
-        });
-    },
-    { deep: true },
-);
-
-const contentParser = ref<Parser>();
 onMounted(async () => {
     // TODO: 调整接口用法
     const path: string = await invoke("get_resource_path");
