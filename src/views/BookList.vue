@@ -78,4 +78,34 @@ onMounted(() => get_book_list());
     </div>
 
 </template>
-../entity/bookInfo
+
+<style scoped>
+.book-list {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+.book-list-item {
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e8e8e8;
+    margin-top: 8px;
+    padding: 16px;
+
+    display: flex;
+}
+
+.book-list-item:hover {
+    background-color: #e8e8e8;
+}
+
+.book-list-item>.book-cover {
+    width: 200px;
+}
+
+.book-list-item>.book-info-panel {
+    margin-left: 12px;
+    width: 80%;
+}
+</style>

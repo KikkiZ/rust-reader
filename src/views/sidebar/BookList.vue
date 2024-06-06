@@ -13,6 +13,12 @@ import { useAppStateStore } from "@/store/appStateStore";
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
 
+const sidebar = ref();
+const form = ref();
+const list = ref();
+const keyWord = ref("");
+const items = ref<BookInfo[]>([]);
+
 watch(
 	() => settingStore.show_side_bar,
 	new_value => {
@@ -20,7 +26,6 @@ watch(
 	},
 );
 
-const sidebar = ref();
 async function show(flag: boolean) {
 	if (!flag) {
 		sidebar.value.style.display = "none";
@@ -28,9 +33,6 @@ async function show(flag: boolean) {
 		sidebar.value.style.display = "block";
 	}
 }
-
-const form = ref();
-const list = ref();
 
 async function update_book() {
 	const selected = (await open({
@@ -57,14 +59,12 @@ async function update_book() {
 	}
 }
 
-const key_word = ref("");
 async function search_book() {
-	if (key_word.value !== "") {
-		await invoke("search_book", { key: key_word.value });
+	if (keyWord.value !== "") {
+		await invoke("search_book", { key: keyWord.value });
 	}
 }
 
-const items = ref<BookInfo[]>([]);
 async function get_book_list() {
 	const msg: string = await invoke("book_list");
 	items.value = JSON.parse(msg);
@@ -94,7 +94,7 @@ onMounted(() => {
 <template>
 	<div class="sidebar" ref="sidebar">
 		<form class="search-form" @submit.prevent="search_book" ref="form">
-			<input type="text" v-model="key_word" placeholder="Search book..." />
+			<input type="text" v-model="keyWord" placeholder="Search book..." />
 			<button type="submit" class="search-button">
 				<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
 					<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -112,7 +112,7 @@ onMounted(() => {
 		</form>
 
 		<ul class="book-list" ref="list">
-			<li v-for="item in items" class="book-list-item" :id="item.id" @click="open_book(item.id)">
+			<li class="book-list-item" v-for="item in items" :id="item.id" @click="open_book(item.id)">
 				<div class="book-cover">
 					<img :src="item.cover_path" />
 				</div>
@@ -127,11 +127,17 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.sidebar {
+	box-sizing: border-box;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
 .search-form {
 	width: 234px;
-	margin: 8px 8px 0 8px;
+	padding: 8px 8px 0 8px;
 
-	top: 8px;
+	top: 0;
 	position: sticky;
 	background-color: white;
 }
@@ -153,7 +159,6 @@ onMounted(() => {
 
 .search-form>input,
 .search-form>button {
-	/* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); */
 	box-shadow: none;
 }
 
@@ -164,51 +169,46 @@ onMounted(() => {
 
 .book-list {
 	list-style-type: none;
-	/* height: 500px; */
-	/* height: auto; */
 	margin: 0px;
 	padding: 8px;
 	overflow: scroll;
-	/* display: flex; */
 }
 
 .book-list-item {
-	border-radius: 0px;
+	border-radius: 8px;
 	border: none;
-	border-top: 1px solid #e8e8e8;
 	margin-top: 0;
 	padding: 8px;
 
 	display: flex;
-	/* transition: background-color 0.3s ease-in-out, border-radius 0.2s ease-in-out; */
+	/* transition: background-color 0.2s ease-in-out; */
 }
 
 .book-list-item:hover {
 	background-color: #e8e8e8;
-	border-radius: 8px;
-	border-top: 1px solid transparent;
-}
-
-.book-list-item:hover+.book-list-item {
-	border-top: 1px solid transparent;
-}
-
-.book-list-item:first-child {
-	border: none;
 }
 
 .book-list-item>.book-cover {
 	width: 60px;
 }
 
+.book-list-item>.book-cover>img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+
+    border-radius: 6px;
+    box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15);
+}
+
 .book-list-item>.book-info-panel {
 	margin-left: 8px;
+	width: 80%;
 }
 
 .book-info-panel>.book-title {
 	margin: 0;
 	margin-top: 4px;
-	/* line-height: 30px; */
 	font-size: 20px;
 	line-height: 20px;
 	color: #363636;

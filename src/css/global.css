@@ -1,5 +1,6 @@
 :root {
-    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+    /* font-family: Inter, Avenir, Helvetica, Arial, sans-serif; */
+    font-family: "ohos", sans-serif;
     font-size: 16px;
     line-height: 24px;
     font-weight: 400;
@@ -7,11 +8,15 @@
     color: #0f0f0f;
     background-color: #f6f6f6;
 
-    font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
+}
+
+@font-face {
+    font-family: "ohos";
+    src: url("@/assets/fonts/HarmonyOS_Sans_Regular.ttf");
 }
 
 .row {
@@ -65,11 +70,6 @@ button {
     outline: none;
 }
 
-#greet-input,
-#path-input {
-    margin-right: 5px;
-}
-
 @media (prefers-color-scheme: dark) {
     :root {
         color: #f6f6f6;
@@ -89,46 +89,6 @@ button {
     button:active {
         background-color: #0f0f0f69;
     }
-}
-
-.book-list {
-    list-style-type: none;
-    margin: 0px;
-    padding: 0px;
-}
-
-.book-list-item {
-    background-color: #ffffff;
-    border-radius: 8px;
-    border: 1px solid #e8e8e8;
-    margin-top: 8px;
-    padding: 16px;
-
-    display: flex;
-}
-
-.book-list-item:hover {
-    background-color: #e8e8e8;
-}
-
-.book-list-item>.book-cover {
-    width: 200px;
-}
-
-.book-list-item>.book-cover>img {
-    width: 100%;
-    height: auto;
-    max-width: 200px;
-    max-height: 280px;
-    object-fit: cover;
-
-    border-radius: 6px;
-    box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15);
-}
-
-.book-list-item>.book-info-panel {
-    margin-left: 12px;
-    width: 80%;
 }
 
 html {

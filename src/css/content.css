@@ -1,0 +1,35 @@
+:root {
+    --font-size: 1.25em;
+    --line-height: 1.5em;
+
+    margin: 0;
+    padding: 0;
+}
+
+.optimize-content {
+    font-family: "xiawu", sans-serif;
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+}
+
+@font-face {
+    font-family: "xiawu";
+    src: url("@/assets/fonts/LXGWWenKaiGBScreen.ttf");
+}
+
+.optimize-content h1,
+.optimize-content h2 {
+    text-align: center;
+}
+
+.optimize-content h3,
+.optimize-content h4,
+.optimize-content h5,
+.optimize-content h6 {
+    text-align: start;
+}
+
+.optimize-content p {
+    text-indent: 2em;
+    text-align: justify;
+}

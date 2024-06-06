@@ -89,7 +89,8 @@ onMounted(() => {
 .sidebar {
     box-sizing: border-box;
     padding: 8px;
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .catalog {
@@ -98,24 +99,15 @@ onMounted(() => {
 }
 
 .catalog-item {
-    border-radius: 0px;
+    border-radius: 8px;
     border: none;
-    border-top: 1px solid #e8e8e8;
     padding: 8px;
-}
 
-.catalog-item:first-child {
-    border-top: none;
+    /* transition: background-color 0.2s ease-in-out; */
 }
 
 .catalog-item:hover {
     background-color: #e8e8e8;
-    border-radius: 8px;
-    border-top: 1px solid transparent;
-}
-
-.catalog-item:hover+.catalog-item {
-    border-top: 1px solid transparent;
 }
 
 .catalog-item>p {
@@ -126,11 +118,11 @@ onMounted(() => {
 
 .current {
     background-color: #396cd8;
+    color: white;
     border-radius: 8px;
-    border-top: 1px solid transparent;
 }
 
-.current+.catalog-item {
-    border-top: 1px solid transparent;
+.current:hover{
+    background-color: #396cd8;
 }
 </style>
