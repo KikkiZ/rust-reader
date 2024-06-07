@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 import { invoke, convertFileSrc } from "@tauri-apps/api/tauri";
 import { open } from "@tauri-apps/api/dialog";
 
@@ -9,30 +9,15 @@ import router from "@/router";
 import eventBus from "@/utils/eventBus";
 import { useSettingStore } from "@/store/settingStore";
 import { useAppStateStore } from "@/store/appStateStore";
+import { refreshView } from "@/core/sidebarControl";
 
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
 
-const sidebar = ref();
 const form = ref();
 const list = ref();
 const keyWord = ref("");
 const items = ref<BookInfo[]>([]);
-
-watch(
-	() => settingStore.show_side_bar,
-	new_value => {
-		show(new_value);
-	},
-);
-
-async function show(flag: boolean) {
-	if (!flag) {
-		sidebar.value.style.display = "none";
-	} else {
-		sidebar.value.style.display = "block";
-	}
-}
 
 async function update_book() {
 	const selected = (await open({
@@ -86,13 +71,13 @@ function open_book(id: string) {
 }
 
 onMounted(() => {
-	show(settingStore.show_side_bar);
+	refreshView(settingStore.show_side_bar);
 	get_book_list();
 });
 </script>
 
 <template>
-	<div class="sidebar" ref="sidebar">
+	<div class="sidebar" id="side">
 		<form class="search-form" @submit.prevent="search_book" ref="form">
 			<input type="text" v-model="keyWord" placeholder="Search book..." />
 			<button type="submit" class="search-button">
@@ -193,12 +178,12 @@ onMounted(() => {
 }
 
 .book-list-item>.book-cover>img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
+	width: 100%;
+	height: auto;
+	object-fit: cover;
 
-    border-radius: 6px;
-    box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15);
+	border-radius: 6px;
+	box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15);
 }
 
 .book-list-item>.book-info-panel {

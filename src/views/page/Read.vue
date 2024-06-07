@@ -2,25 +2,18 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
-import { useAppStateStore } from "@/store/appStateStore";
-import { useSettingStore } from "@/store/settingStore";
 import eventBus from "@/utils/eventBus";
 import appendPath from "@/utils/commonUtils";
+import { useAppStateStore } from "@/store/appStateStore";
+import { useSettingStore } from "@/store/settingStore";
 import { ParseType, Parser } from "@/core/contentParser";
+import { refreshView } from "@/core/sidebarControl";
 
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
 
-const main = ref();
 const contentString = ref("");
 const contentParser = ref<Parser>();
-
-watch(
-    () => settingStore.show_side_bar,
-    new_value => {
-        show(new_value);
-    },
-);
 
 watch(
     () => appStateStore.current_chapter,
@@ -51,14 +44,6 @@ watch(
     },
     { deep: true },
 );
-
-function show(flag: boolean) {
-    if (flag) {
-        main.value.style.marginLeft = 250 + "px";
-    } else {
-        main.value.style.marginLeft = 0;
-    }
-}
 
 async function prev_page() {
     const result: string = await invoke("prev_page");
@@ -97,11 +82,12 @@ async function open_book(id: string) {
 }
 
 onMounted(async () => {
+    refreshView(settingStore.show_side_bar);
+
     // TODO: 调整接口用法
     const path: string = await invoke("get_resource_path");
     const resource_path = appendPath(path, appStateStore.current_book_id);
 
-    show(settingStore.show_side_bar);
     open_book(appStateStore.current_book_id);
 
     contentParser.value = new Parser(resource_path, ParseType.Optimize);
@@ -113,7 +99,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="main" ref="main">
+    <div class="main" id="main">
         <div id="content" v-html="contentString"></div>
 
         <div class="row" v-show="contentString">

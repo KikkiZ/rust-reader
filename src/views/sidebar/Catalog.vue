@@ -3,21 +3,17 @@ import { nextTick, onMounted, ref, watch } from "vue";
 import { invoke } from "@tauri-apps/api/tauri";
 
 import router from "@/router";
+import eventBus from "@/utils/eventBus";
 import { useSettingStore } from "@/store/settingStore";
 import { useAppStateStore } from "@/store/appStateStore";
-import eventBus from "@/utils/eventBus";
+import { refreshView } from "@/core/sidebarControl";
 
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
 
 const catalog_list = ref();
 
-watch(
-    () => settingStore.show_side_bar,
-    new_value => {
-        show(new_value);
-    },
-);
+const catalog = ref<Array<String>[]>([]);
 
 watch(
     () => appStateStore.current_book_id,
@@ -36,16 +32,6 @@ watch(
     },
 )
 
-const sidebar = ref();
-async function show(flag: boolean) {
-    if (!flag) {
-        sidebar.value.style.display = "none";
-    } else {
-        sidebar.value.style.display = "block";
-    }
-}
-
-const catalog = ref<Array<String>[]>([]);
 
 // 刷新目录
 // 只有在 appStateStore.current_book_id 发生改变或首次打开
@@ -69,13 +55,13 @@ function back() {
 }
 
 onMounted(() => {
-    show(settingStore.show_side_bar);
+    refreshView(settingStore.show_side_bar);
     refresh_catalog();
 })
 </script>
 
 <template>
-    <div class="sidebar" ref="sidebar">
+    <div class="sidebar" id="side">
         <button @click="back()">back</button>
         <ul class="catalog" ref="catalog_list">
             <li v-for="(item, index) in catalog" @click="appStateStore.current_chapter = index" class="catalog-item">
@@ -122,7 +108,7 @@ onMounted(() => {
     border-radius: 8px;
 }
 
-.current:hover{
+.current:hover {
     background-color: #396cd8;
 }
 </style>
