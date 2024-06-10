@@ -64,7 +64,7 @@ onMounted(() => {
     <div class="sidebar" id="side">
         <button @click="back()">back</button>
         <ul class="catalog" ref="catalog_list">
-            <li v-for="(item, index) in catalog" @click="appStateStore.current_chapter = index" class="catalog-item">
+            <li v-for="(item, index) in catalog" @click="appStateStore.current_chapter = index" class="catalog-item" v-slide-in>
                 <p>{{ item }}</p>
             </li>
         </ul>
