@@ -63,11 +63,11 @@ onMounted(() => {
 <template>
     <div class="sidebar" id="side">
         <button @click="back()">back</button>
-        <ul class="catalog" ref="catalog_list">
-            <li v-for="(item, index) in catalog" @click="appStateStore.current_chapter = index" class="catalog-item" v-slide-in>
+        <div class="catalog" ref="catalog_list">
+            <div v-for="(item, index) in catalog" @click="appStateStore.current_chapter = index" class="catalog-item" v-slide-in>
                 <p>{{ item }}</p>
-            </li>
-        </ul>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -80,8 +80,11 @@ onMounted(() => {
 }
 
 .catalog {
-    list-style: none;
     padding: 0;
+    margin: 8px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .catalog-item {
