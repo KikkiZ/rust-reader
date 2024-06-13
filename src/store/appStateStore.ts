@@ -6,4 +6,9 @@ export const useAppStateStore = defineStore("appState", () => {
     const current_chapter = ref(0);
 
     return { current_book_id, current_chapter };
+}, { 
+    persist: {
+        key: "appState",
+        storage: localStorage,
+    }
 });

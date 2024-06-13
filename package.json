@@ -13,6 +13,7 @@
     "@tauri-apps/api": "^1.5.3",
     "mitt": "^3.0.1",
     "pinia": "^2.1.7",
+    "pinia-plugin-persistedstate": "^3.2.1",
     "ua-parser-js": "^1.0.37",
     "vue": "^3.3.4",
     "vue-router": "^4.3.0"
