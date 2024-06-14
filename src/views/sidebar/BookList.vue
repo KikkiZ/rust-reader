@@ -18,6 +18,7 @@ const form = ref();
 const list = ref();
 const keyWord = ref("");
 const items = ref<BookInfo[]>([]);
+const clickTimeout = ref(-1);
 
 async function update_book() {
 	const selected = (await open({
@@ -59,7 +60,32 @@ async function get_book_list() {
 	});
 }
 
-function open_book(id: string) {
+function openDetail(id: string) {
+	if (clickTimeout.value > 0) {
+		clearTimeout(clickTimeout.value);
+		clickTimeout.value = -1
+	}
+
+	clickTimeout.value = window.setTimeout(() => {
+		invoke("book_detail", { id: id });
+		appStateStore.current_book_id = id;
+
+		try {
+			router.push("/detail");
+		} catch (error) {
+			console.log(error);
+		}
+
+		clickTimeout.value = -1;
+	}, 300);
+}
+
+function openBook(id: string) {
+	if (clickTimeout.value > 0) {
+		clearTimeout(clickTimeout.value);
+		clickTimeout.value = -1;
+	}
+
 	invoke("open_book", { id: id });
 	appStateStore.current_book_id = id;
 
@@ -96,8 +122,9 @@ onMounted(() => {
 			</button>
 		</form>
 
-		<ul class="book-list" ref="list">
-			<li class="book-list-item" v-for="item in items" :id="item.id" @click="open_book(item.id)">
+		<div class="book-list" ref="list">
+			<div class="book-list-item" v-for="item in items" :id="item.id" @click="openDetail(item.id)"
+				@dblclick="openBook(item.id)">
 				<div class="book-cover">
 					<img :src="item.cover_path" />
 				</div>
@@ -106,8 +133,8 @@ onMounted(() => {
 					<h4 class="book-title">{{ item.title }}</h4>
 					<p class="book-info">{{ item.creator }} / {{ item.date }}</p>
 				</div>
-			</li>
-		</ul>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -153,9 +180,10 @@ onMounted(() => {
 }
 
 .book-list {
-	list-style-type: none;
 	margin: 0px;
 	padding: 8px;
+	display: flex;
+	flex-direction: column;
 	overflow: scroll;
 }
 

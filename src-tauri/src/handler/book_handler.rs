@@ -1,5 +1,5 @@
 use std::{
-    fs::{create_dir_all, File},
+    fs::{self, create_dir_all, File},
     io::{BufReader, Read, Write},
     path::{Path, PathBuf},
 };
@@ -20,6 +20,64 @@ use crate::{
 };
 
 use super::CURRENT_BOOK;
+
+/// 获取书籍详情
+///
+/// 参数: id
+///
+/// 返回一个Json Object:
+/// {
+///     "exist": boolean,
+///     "info": string,
+///     "msg": string
+/// }
+#[tauri::command]
+pub fn book_detail(id: &str) -> String {
+    let result;
+    let book_info = GLOBAL_CONFIG.book.info.clone();
+
+    match fs::read_to_string(book_info) {
+        Ok(content) => {
+            let book_list: Vec<BookInfo> = serde_json::from_str(&content).unwrap();
+            let info = book_list.iter().find(|book| book.id == id);
+
+            match info {
+                Some(info) => {
+                    result = json!({
+                        "exist": true,
+                        "info": info,
+                    })
+                }
+                None => {
+                    let msg = Notification {
+                        r#type: NotificationType::Warn,
+                        title: "Warn".to_string(),
+                        msg: "No such book".to_string(),
+                    };
+
+                    result = json!({
+                        "exist": false,
+                        "msg": msg,
+                    })
+                }
+            }
+        }
+        Err(_) => {
+            let msg = Notification {
+                r#type: NotificationType::Err,
+                title: "Error".to_string(),
+                msg: "An error occurred while getting info".to_string(),
+            };
+
+            result = json!({
+                "exist": false,
+                "msg": msg,
+            })
+        }
+    }
+
+    json_to_string(&result)
+}
 
 /// 打开书籍
 ///
@@ -185,7 +243,7 @@ pub fn search_book(key: &str) {
 }
 
 /// 获取当前打开书本的 css 文件
-/// 
+///
 /// 返回一个 Json Object：
 /// {
 ///     "css": string,
