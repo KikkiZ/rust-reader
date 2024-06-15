@@ -27,11 +27,12 @@ class Parser {
         const result: string = await invoke("get_css");
         const { success, css } = JSON.parse(result);
 
+        let head = document.head;
+
         // 添加样式
         if (success) {
             this.css_names = Object.keys(css);
 
-            let head = document.head;
             for (const key of this.css_names) {
                 let style_tag = document.createElement("style");
 
@@ -42,7 +43,8 @@ class Parser {
             }
         }
 
-        // TODO: 添加 Optimize 样式
+        // TODO: 添加 Optimize 样式, css 文件已添加, 需要在此处添加样式
+        document.getElementById("content")!.classList.add("optimize-content");
     }
 
     // 文本内容解析
@@ -54,7 +56,7 @@ class Parser {
 
             case ParseType.Optimize:
                 // 重新初始化参数
-                this.index = 0; 
+                this.index = 0;
                 this.contents = [];
 
                 this.parseInNativeMode(); // 为了将原始的 DOM 中的图像链接转换为 tauri 的文件路径
@@ -76,6 +78,7 @@ class Parser {
                 head.removeChild(style_tag);
             }
         }
+        document.getElementById("content")!.classList.remove("optimize-content");
     }
 
     // 解析为原始样式
@@ -157,11 +160,21 @@ class Parser {
                 return item;
             }) // 处理节点内容
             .forEach(item => {
+                if (item.type === "aside") return;
+                if (item.type === "small") {
+                    const text = content?.lastChild?.textContent;
+                    if (text) {
+                        content.lastChild.textContent += item.content;
+                        return;
+                    }
+                }
+
                 const node = document.createElement(item.type);
                 node.textContent = item.content;
+                // node.setAttribute("v-slide-in", "");
 
                 content?.appendChild(node);
-            });
+            }); // 将解析结果转为 DOM
 
         for (const index in this.contents) {
             console.log(index, ": ", this.contents[index]);
