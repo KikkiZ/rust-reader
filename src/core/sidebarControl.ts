@@ -7,12 +7,12 @@ export default {
 
         watch(
             () => settingStore.show_side_bar,
-            new_value => {
-                refreshView(new_value);
+            (newValue) => {
+                refreshView(newValue);
             },
         );
-    }
-}
+    },
+};
 
 export function refreshView(flag: boolean) {
     const side = document.getElementById("side");
@@ -26,4 +26,3 @@ export function refreshView(flag: boolean) {
         main!.style.marginLeft = "0";
     }
 }
-

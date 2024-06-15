@@ -7,15 +7,15 @@ import appendPath from "@/utils/commonUtils";
 
 class Parser {
     private resource_path: string;
-    private parse_type: ParseType;
-    private css_names: string[] = [];
+    private parseType: ParseType;
+    private cssNames: string[] = [];
 
     private index: number = 0;
     private contents: ParsedNode[] = [];
 
-    constructor(path: string, parse_type: ParseType) {
+    constructor(path: string, parseType: ParseType) {
         this.resource_path = path;
-        this.parse_type = parse_type;
+        this.parseType = parseType;
 
         this.init();
     }
@@ -31,15 +31,15 @@ class Parser {
 
         // 添加样式
         if (success) {
-            this.css_names = Object.keys(css);
+            this.cssNames = Object.keys(css);
 
-            for (const key of this.css_names) {
-                let style_tag = document.createElement("style");
+            for (const key of this.cssNames) {
+                let styleTag = document.createElement("style");
 
-                style_tag.id = key;
-                style_tag.innerHTML = css[key];
+                styleTag.id = key;
+                styleTag.innerHTML = css[key];
 
-                head.appendChild(style_tag);
+                head.appendChild(styleTag);
             }
         }
 
@@ -49,7 +49,7 @@ class Parser {
 
     // 文本内容解析
     public contentParse() {
-        switch (this.parse_type) {
+        switch (this.parseType) {
             case ParseType.Native:
                 this.parseInNativeMode();
                 break;
@@ -62,7 +62,6 @@ class Parser {
                 this.parseInNativeMode(); // 为了将原始的 DOM 中的图像链接转换为 tauri 的文件路径
                 this.parseInOptimizeMode();
                 break;
-
         }
     }
 
@@ -72,13 +71,15 @@ class Parser {
 
         // 删除样式
         let head = document.head;
-        for (const key of this.css_names) {
-            let style_tag = document.getElementById(key);
-            if (style_tag) {
-                head.removeChild(style_tag);
+        for (const key of this.cssNames) {
+            let styleTag = document.getElementById(key);
+            if (styleTag) {
+                head.removeChild(styleTag);
             }
         }
-        document.getElementById("content")!.classList.remove("optimize-content");
+        document
+            .getElementById("content")!
+            .classList.remove("optimize-content");
     }
 
     // 解析为原始样式
@@ -100,7 +101,6 @@ class Parser {
 
         let children = node.childNodes;
         if (children.length === 0 && element !== undefined) {
-
             if (element.hasAttribute("src")) {
                 element = element as HTMLImageElement;
 
@@ -108,7 +108,6 @@ class Parser {
                 target = appendPath(this.resource_path, target);
 
                 element.src = convertFileSrc(target);
-
             } else if (element.hasAttribute("href")) {
                 element = element as HTMLAnchorElement;
 
@@ -116,7 +115,6 @@ class Parser {
                 target = appendPath(this.resource_path, target);
 
                 element.href = convertFileSrc(target);
-
             } else if (element.hasAttribute("xlink:href")) {
                 element = element as unknown as SVGImageElement;
 
@@ -149,8 +147,8 @@ class Parser {
 
         content!.innerHTML = ""; // 清空内容
         this.contents
-            .filter(item => item !== undefined && item !== null) // 过滤掉未定义的一些空节点
-            .map(item => {
+            .filter((item) => item !== undefined && item !== null) // 过滤掉未定义的一些空节点
+            .map((item) => {
                 if (item.type === undefined) {
                     item.type = "p";
                 } else {
@@ -159,7 +157,7 @@ class Parser {
 
                 return item;
             }) // 处理节点内容
-            .forEach(item => {
+            .forEach((item) => {
                 if (item.type === "aside") return;
                 if (item.type === "small") {
                     const text = content?.lastChild?.textContent;
@@ -179,7 +177,7 @@ class Parser {
         for (const index in this.contents) {
             console.log(index, ": ", this.contents[index]);
         }
-        console.log(this.contents)
+        console.log(this.contents);
     }
 
     private loop(node: HTMLElement | ChildNode, depth: number) {
@@ -209,13 +207,20 @@ class Parser {
                 // 当前节点可能为 depth 为1的 TEXT_NODE,
                 // 此时该节点对应的 ParsedNode 未初始化
                 if (this.contents[this.index]) {
-                    (this.contents[this.index]).append(str);
+                    this.contents[this.index].append(str);
                 }
             }
 
             if (current.nodeType === Node.ELEMENT_NODE) {
                 const node = current as HTMLElement;
-                msg += this.type(current.nodeType) + ": " + node.tagName + "; Display: " + this.diplay(node) + "; Class: " + node.classList;
+                msg +=
+                    this.type(current.nodeType) +
+                    ": " +
+                    node.tagName +
+                    "; Display: " +
+                    this.diplay(node) +
+                    "; Class: " +
+                    node.classList;
             }
 
             this.format(depth, msg);
@@ -234,17 +239,28 @@ class Parser {
 
     private type(nodeType: number) {
         switch (nodeType) {
-            case 1: return "ElementNode";
-            case 2: return "AttributeNode";
-            case 3: return "TextNode";
-            case 4: return "CDATANode";
-            case 5: return "EntityReferenceNode";
-            case 6: return "EntityNode";
-            case 7: return "ProcessingInstructionNode";
-            case 8: return "CommentNode";
-            case 9: return "DocumentNode";
-            case 10: return "DocumentTypeNode";
-            default: return "UnknownNode";
+            case 1:
+                return "ElementNode";
+            case 2:
+                return "AttributeNode";
+            case 3:
+                return "TextNode";
+            case 4:
+                return "CDATANode";
+            case 5:
+                return "EntityReferenceNode";
+            case 6:
+                return "EntityNode";
+            case 7:
+                return "ProcessingInstructionNode";
+            case 8:
+                return "CommentNode";
+            case 9:
+                return "DocumentNode";
+            case 10:
+                return "DocumentTypeNode";
+            default:
+                return "UnknownNode";
         }
     }
 
@@ -273,7 +289,6 @@ class ParsedNode {
         } else {
             this.style = [];
         }
-
     }
 
     public append(content: string | undefined) {
@@ -282,10 +297,74 @@ class ParsedNode {
         }
     }
 
-    private BLOCK_ELEMENTS = ["div", "p", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "table", "thead", "tbody", "tr", "th", "td", "blockquote", "pre", "dl", "dt", "dd", "hr", "br", "nav", "aside"];
-    private INLINE_ELEMENTS = ["a", "b", "i", "strong", "em", "code", "span", "img", "sub", "sup", "small", "big", "mark", "del", "ins", "u", "s", "q", "cite", "kbd", "var", "samp", "time", "ruby", "rt", "rp", "abbr", "data", "time", "dfn", "address", "ins", "del", "small", "sub", "sup"];
+    private BLOCK_ELEMENTS = [
+        "div",
+        "p",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "ul",
+        "ol",
+        "li",
+        "table",
+        "thead",
+        "tbody",
+        "tr",
+        "th",
+        "td",
+        "blockquote",
+        "pre",
+        "dl",
+        "dt",
+        "dd",
+        "hr",
+        "br",
+        "nav",
+        "aside",
+    ];
+    private INLINE_ELEMENTS = [
+        "a",
+        "b",
+        "i",
+        "strong",
+        "em",
+        "code",
+        "span",
+        "img",
+        "sub",
+        "sup",
+        "small",
+        "big",
+        "mark",
+        "del",
+        "ins",
+        "u",
+        "s",
+        "q",
+        "cite",
+        "kbd",
+        "var",
+        "samp",
+        "time",
+        "ruby",
+        "rt",
+        "rp",
+        "abbr",
+        "data",
+        "time",
+        "dfn",
+        "address",
+        "ins",
+        "del",
+        "small",
+        "sub",
+        "sup",
+    ];
 
-    public display_type() {
+    public displayType() {
         const tag = this.type.toLowerCase();
 
         if (this.BLOCK_ELEMENTS.includes(tag)) return "BLOCK";

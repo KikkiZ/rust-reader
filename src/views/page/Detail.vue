@@ -16,7 +16,7 @@ watch(
     () => appStateStore.current_book_id,
     () => {
         showDetail(appStateStore.current_book_id);
-    }
+    },
 );
 
 async function showDetail(id: string) {
@@ -46,7 +46,9 @@ onMounted(() => {
         <div class="info-panel">
             <h1 class="title">{{ detail?.title }}</h1>
             <p class="creator">{{ detail?.creator }}</p>
-            <p class="description" v-if="detail?.description!==''">{{ detail?.description }}</p>
+            <p class="description" v-if="detail?.description !== ''">
+                {{ detail?.description }}
+            </p>
         </div>
     </div>
 </template>
@@ -61,7 +63,7 @@ onMounted(() => {
     max-width: 200px;
     min-width: 200px;
 }
-    
+
 .detail .cover img {
     width: 100%;
     border-radius: 8px;

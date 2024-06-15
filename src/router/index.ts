@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router"
+import { createRouter, createWebHistory } from "vue-router";
 
 import Read from "@/views/page/Read.vue";
 import Index from "@/views/page/Index.vue";
@@ -9,7 +9,7 @@ import Catalog from "@/views/sidebar/Catalog.vue";
 const routes = [
     {
         path: "/",
-        redirect: "/list"
+        redirect: "/list",
     },
     {
         path: "/list",
@@ -31,7 +31,7 @@ const routes = [
             side: Catalog,
             main: Read,
         },
-    }
+    },
 ];
 
 const router = createRouter({

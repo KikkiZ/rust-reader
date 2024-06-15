@@ -12,9 +12,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="main" id="main">
-        hello
-    </div>
+    <div class="main" id="main">hello</div>
 </template>
 
 <style></style>

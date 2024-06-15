@@ -1,3 +1,3 @@
 export default interface BookMark {
-    id: string,
+    id: string;
 }

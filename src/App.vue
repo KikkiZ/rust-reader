@@ -11,7 +11,7 @@ import { useSettingStore } from "./store/settingStore";
 onMounted(async () => {
     const result: string = await invoke("get_config");
     const config = JSON.parse(result);
-    
+
     const setting = useSettingStore();
     setting.show_side_bar = config.setting.sidebar as boolean;
 });

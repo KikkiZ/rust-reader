@@ -4,7 +4,7 @@ import "./assets/css/content.css";
 import App from "./App.vue";
 import router from "./router";
 import pinia from "./store";
-import sidebarControl from "./core/sidebarControl"
+import sidebarControl from "./core/sidebarControl";
 import slideIn from "./utils/vSlideIn";
 
 const app = createApp(App);

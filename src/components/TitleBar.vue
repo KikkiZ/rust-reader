@@ -1,71 +1,107 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { appWindow } from "@tauri-apps/api/window";
 
 import { useSettingStore } from "@/store/settingStore";
 
 const settingStore = useSettingStore();
 
-watch(
-    () => settingStore.show_side_bar,
-    new_value => side_bar(new_value),
-);
-
 const titlebar = ref();
 
-function side_bar(flag: boolean) {
+watch(
+    () => settingStore.show_side_bar,
+    (newValue) => sideBar(newValue),
+);
+
+function sideBar(flag: boolean) {
     settingStore.show_side_bar = flag;
     if (settingStore.show_side_bar) {
-        titlebar.value.style.left = 250 + 'px';
+        titlebar.value.style.left = 250 + "px";
     } else {
         titlebar.value.style.left = 0;
     }
-    // eventBus.emit("show_side_bar", show_side_bar.value);
 }
 
 onMounted(() => {
-    side_bar(settingStore.show_side_bar);
+    sideBar(settingStore.show_side_bar);
 
-    document.getElementById("titlebar-side")!.addEventListener('click', () => settingStore.show_side_bar = !settingStore.show_side_bar);
-    document.getElementById("titlebar-minimize")!.addEventListener('click', () => appWindow.minimize());
-    document.getElementById("titlebar-maximize")!.addEventListener('click', () => appWindow.toggleMaximize());
-    document.getElementById("titlebar-close")!.addEventListener('click', () => appWindow.close());
-});
-
-onBeforeUnmount(() => {
-    // eventBus.off("show_side_bar");
+    document
+        .getElementById("titlebar-side")!
+        .addEventListener(
+            "click",
+            () => (settingStore.show_side_bar = !settingStore.show_side_bar),
+        );
+    document
+        .getElementById("titlebar-minimize")!
+        .addEventListener("click", () => appWindow.minimize());
+    document
+        .getElementById("titlebar-maximize")!
+        .addEventListener("click", () => appWindow.toggleMaximize());
+    document
+        .getElementById("titlebar-close")!
+        .addEventListener("click", () => appWindow.close());
 });
 </script>
 
 <template>
     <div data-tauri-drag-region class="titlebar" ref="titlebar">
         <div class="titlebar-button titlebar-side" id="titlebar-side">
-            <svg v-show="!settingStore.show_side_bar" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+            <svg
+                v-show="!settingStore.show_side_bar"
+                xmlns="http://www.w3.org/2000/svg"
+                width="1em"
+                height="1em"
                 viewBox="0 0 24 24">
-                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                    <path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm5-2v16" />
+                <g
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2">
+                    <path
+                        d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm5-2v16" />
                     <path d="m14 10l2 2l-2 2" />
                 </g>
             </svg>
-            <svg v-show="settingStore.show_side_bar" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                    <path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm5-2v16" />
+            <svg
+                v-show="settingStore.show_side_bar"
+                xmlns="http://www.w3.org/2000/svg"
+                width="1em"
+                height="1em"
+                viewBox="0 0 24 24">
+                <g
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2">
+                    <path
+                        d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm5-2v16" />
                     <path d="m15 10l-2 2l2 2" />
                 </g>
             </svg>
         </div>
         <div>
-            <div class="titlebar-button titlebar-minimize" id="titlebar-minimize">
-                <img src="https://api.iconify.design/mdi:window-minimize.svg" alt="minimize" />
+            <div
+                class="titlebar-button titlebar-minimize"
+                id="titlebar-minimize">
+                <img
+                    src="https://api.iconify.design/mdi:window-minimize.svg"
+                    alt="minimize" />
             </div>
-            <div class="titlebar-button titlebar-maximize" id="titlebar-maximize">
-                <img src="https://api.iconify.design/mdi:window-maximize.svg" alt="maximize" />
+            <div
+                class="titlebar-button titlebar-maximize"
+                id="titlebar-maximize">
+                <img
+                    src="https://api.iconify.design/mdi:window-maximize.svg"
+                    alt="maximize" />
             </div>
             <div class="titlebar-button titlebar-close" id="titlebar-close">
-                <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
+                <img
+                    src="https://api.iconify.design/mdi:close.svg"
+                    alt="close" />
             </div>
         </div>
-
     </div>
 </template>
 
@@ -99,7 +135,7 @@ onBeforeUnmount(() => {
     backdrop-filter: blur(1px);
 }
 
-.titlebar-side>svg {
+.titlebar-side > svg {
     height: 20px;
     width: 20px;
 }

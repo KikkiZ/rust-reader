@@ -6,18 +6,16 @@ const DURATION = 500;
 const slideDownMap = new WeakMap();
 const slideUpMap = new WeakMap();
 
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
 
         if (fromAboveViewport(entry)) {
-            console.log(entry.target.id, '从上方进入视口');
             const animation = slideDownMap.get(entry.target);
             animation.play();
         }
 
         if (fromBelowViewport(entry)) {
-            console.log(entry.target.id, '从下方进入视口');
             const animation = slideUpMap.get(entry.target);
             animation.play();
         }
@@ -44,14 +42,14 @@ const slideIn: Directive = {
                     opacity: 0.5,
                 },
                 {
-                    transform: 'translateY(0)',
+                    transform: "translateY(0)",
                     opacity: 1,
                 },
             ],
             {
                 duration: DURATION,
-                easing: 'ease-in-out',
-            }
+                easing: "ease-in-out",
+            },
         );
         slideDownMap.set(element, slideDown);
 
@@ -62,14 +60,14 @@ const slideIn: Directive = {
                     opacity: 0.5,
                 },
                 {
-                    transform: 'translateY(0)',
+                    transform: "translateY(0)",
                     opacity: 1,
                 },
             ],
             {
                 duration: DURATION,
-                easing: 'ease-in-out',
-            }
+                easing: "ease-in-out",
+            },
         );
         slideUpMap.set(element, slideUp);
 
@@ -78,7 +76,7 @@ const slideIn: Directive = {
 
     unmounted(element: HTMLElement) {
         observer.unobserve(element);
-    }
-}
+    },
+};
 
 export default slideIn;

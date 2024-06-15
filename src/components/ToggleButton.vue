@@ -2,31 +2,30 @@
 /**
  * @component ToggleButton
  * @description 这是一个 Toggle 按钮
- * 
+ *
  * @props {Number} [width:40] - 按钮宽度, 默认为 40px
  * @props {Number} [height:25] - 按钮高度, 默认为 25px
  * @props {Boolean} [value: false] - 按钮初始状态, 默认为 false
- * 
+ *
  * @emits {event: toggle-value} - 当按钮的值切换时, 返回切换后的值
- * 
+ *
  * @example
  * <ToggleButton :width=100 :height=50 @toggle-value="handle"/>
  * <ToggleButton :value=true @toggle-value="handle" />
  */
-import { onMounted, ref } from 'vue';
+import { onMounted, ref } from "vue";
 
 const button = ref();
 const round = ref();
-
 const toggleValue = ref(false);
 
 function toggle() {
     toggleValue.value = !toggleValue.value;
-    style_transition();
+    styleTransition();
     emit("toggle-value", toggleValue.value);
 }
 
-function style_transition() {
+function styleTransition() {
     if (toggleValue.value) {
         button.value.style.flexDirection = "row-reverse";
         button.value.style.backgroundColor = "#34c659";
@@ -55,8 +54,8 @@ onMounted(() => {
     round.value.style.height = minValue - 6 + "px";
 
     toggleValue.value = props.value;
-    style_transition();
-})
+    styleTransition();
+});
 </script>
 
 <template>

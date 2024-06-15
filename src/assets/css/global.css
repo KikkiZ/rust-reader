@@ -1,5 +1,4 @@
 :root {
-    /* font-family: Inter, Avenir, Helvetica, Arial, sans-serif; */
     font-family: "ohos", sans-serif;
     font-size: 16px;
     line-height: 24px;
@@ -100,7 +99,6 @@ body {
     margin: 0;
     padding: 0;
 }
-
 
 .mt-8 {
     margin-top: 8px;
