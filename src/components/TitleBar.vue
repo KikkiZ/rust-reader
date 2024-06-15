@@ -17,8 +17,36 @@ function sideBar(flag: boolean) {
     settingStore.show_side_bar = flag;
     if (settingStore.show_side_bar) {
         titlebar.value.style.left = 250 + "px";
+        titlebar.value.animate(
+            [
+                {
+                    left: 0,
+                },
+                {
+                    left: "250px",
+                },
+            ],
+            {
+                duration: 300,
+                easing: "ease-in-out",
+            },
+        );
     } else {
         titlebar.value.style.left = 0;
+        titlebar.value.animate(
+            [
+                {
+                    left: "250px",
+                },
+                {
+                    left: 0,
+                },
+            ],
+            {
+                duration: 300,
+                easing: "ease-in-out",
+            },
+        );
     }
 }
 
