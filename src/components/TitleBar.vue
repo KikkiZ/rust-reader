@@ -1,58 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted } from "vue";
 import { appWindow } from "@tauri-apps/api/window";
 
 import { useSettingStore } from "@/store/settingStore";
 
 const settingStore = useSettingStore();
 
-const titlebar = ref();
-
-watch(
-    () => settingStore.show_side_bar,
-    (newValue) => sideBar(newValue),
-);
-
-function sideBar(flag: boolean) {
-    settingStore.show_side_bar = flag;
-    if (settingStore.show_side_bar) {
-        titlebar.value.style.left = 250 + "px";
-        titlebar.value.animate(
-            [
-                {
-                    left: 0,
-                },
-                {
-                    left: "250px",
-                },
-            ],
-            {
-                duration: 300,
-                easing: "ease-in-out",
-            },
-        );
-    } else {
-        titlebar.value.style.left = 0;
-        titlebar.value.animate(
-            [
-                {
-                    left: "250px",
-                },
-                {
-                    left: 0,
-                },
-            ],
-            {
-                duration: 300,
-                easing: "ease-in-out",
-            },
-        );
-    }
-}
-
 onMounted(() => {
-    sideBar(settingStore.show_side_bar);
-
     document
         .getElementById("titlebar-side")!
         .addEventListener(
@@ -72,7 +26,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div data-tauri-drag-region class="titlebar" ref="titlebar">
+    <div data-tauri-drag-region class="titlebar" id="title">
         <div class="titlebar-button titlebar-side" id="titlebar-side">
             <svg
                 v-show="!settingStore.show_side_bar"
