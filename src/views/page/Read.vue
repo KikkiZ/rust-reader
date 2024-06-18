@@ -12,6 +12,7 @@ import { refreshView } from "@/core/sidebarControl";
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
 
+const main = ref();
 const contentString = ref("");
 const contentParser = ref<Parser>();
 
@@ -38,10 +39,24 @@ watch(
             contentParser.value?.contentParse();
 
             // 滚动到顶部
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth",
-            });
+            const start = main.value.scrollTop;
+            const change = -start;
+            const startTime = performance.now();
+
+            function animateScroll(currentTime: number) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / 300, 1); // 动画执行的进度
+                main.value.scrollTop = start + change * progress;
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateScroll);
+                }
+            }
+
+            // 该函数由浏览器提供, 用于创建动画帧
+            // 该函数接收一个回调函数作为参数, 在回调函数中
+            // 更新元素的变化, 并可以根据时间戳来判断动画是否完成
+            requestAnimationFrame(animateScroll);
         });
     },
     { deep: true },
@@ -101,7 +116,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="main" id="main">
+    <div class="main" id="main" ref="main">
         <div id="content" v-html="contentString"></div>
 
         <div class="row" v-show="contentString">
@@ -141,8 +156,4 @@ onBeforeUnmount(() => {
     </div>
 </template>
 
-<style>
-.main {
-    padding: 64px 16px;
-}
-</style>
+<style scoped></style>

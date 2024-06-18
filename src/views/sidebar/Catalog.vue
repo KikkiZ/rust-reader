@@ -61,7 +61,7 @@ onMounted(() => {
 
 <template>
     <div class="sidebar" id="side">
-        <button @click="back()">back</button>
+        <button @click="back()" v-slide-in>back</button>
         <div class="catalog" ref="catalogList">
             <div
                 v-for="(item, index) in catalog"
@@ -77,7 +77,6 @@ onMounted(() => {
 <style scoped>
 .sidebar {
     box-sizing: border-box;
-    padding: 8px;
     overflow-x: hidden;
     overflow-y: scroll;
 }
@@ -87,19 +86,17 @@ onMounted(() => {
     margin: 8px 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
 }
 
 .catalog-item {
     border-radius: 8px;
     border: none;
     padding: 8px;
-
-    /* transition: background-color 0.2s ease-in-out; */
 }
 
 .catalog-item:hover {
-    background-color: #e8e8e8;
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .catalog-item > p {

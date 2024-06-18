@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { invoke, convertFileSrc } from "@tauri-apps/api/tauri";
 import { open } from "@tauri-apps/api/dialog";
 
@@ -19,8 +19,17 @@ const list = ref();
 const keyWord = ref("");
 const items = ref<BookInfo[]>([]);
 const clickTimeout = ref(-1);
+const selectItem = ref("");
 
-async function update_book() {
+watch(selectItem, (newValue, oldValue) => {
+    const newItem = document.getElementById(newValue);
+    const oldItem = document.getElementById(oldValue);
+
+    newItem?.classList.add("selected");
+    oldItem?.classList.remove("selected");
+});
+
+async function updateBook() {
     const selected = (await open({
         multiple: true,
         filters: [
@@ -71,6 +80,7 @@ function openDetail(id: string) {
     clickTimeout.value = window.setTimeout(() => {
         invoke("book_detail", { id: id });
         appStateStore.current_book_id = id;
+        selectItem.value = id;
 
         try {
             router.push("/detail");
@@ -123,22 +133,6 @@ onMounted(() => {
                         d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0-14 0m18 11l-6-6" />
                 </svg>
             </button>
-            <button class="ml-8" @click="update_book()">
-                update
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="1em"
-                    height="1em"
-                    viewBox="0 0 24 24">
-                    <path
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 19H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4l3 3h7a2 2 0 0 1 2 2v3.5M19 22v-6m3 3l-3-3l-3 3" />
-                </svg>
-            </button>
         </form>
 
         <div class="book-list" ref="list">
@@ -160,6 +154,23 @@ onMounted(() => {
                 </div>
             </div>
         </div>
+
+        <button @click="updateBook()" style="margin-top: 8px">
+            update
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="1em"
+                height="1em"
+                viewBox="0 0 24 24">
+                <path
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 19H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4l3 3h7a2 2 0 0 1 2 2v3.5M19 22v-6m3 3l-3-3l-3 3" />
+            </svg>
+        </button>
     </div>
 </template>
 
@@ -171,16 +182,14 @@ onMounted(() => {
 }
 
 .search-form {
-    width: 234px;
-    padding: 8px 8px 0 8px;
+    width: 244px;
 
     top: 0;
     position: sticky;
-    background-color: white;
 }
 
 .search-form > input {
-    width: 158px;
+    width: 168px;
     height: 40px;
     padding: 0 15px;
     border: 1px solid #e8e8e8;
@@ -206,8 +215,9 @@ onMounted(() => {
 
 .book-list {
     margin: 0px;
-    padding: 8px;
+    margin-top: 8px;
     display: flex;
+    gap: 4px;
     flex-direction: column;
     overflow: scroll;
 }
@@ -219,11 +229,10 @@ onMounted(() => {
     padding: 8px;
 
     display: flex;
-    /* transition: background-color 0.2s ease-in-out; */
 }
 
 .book-list-item:hover {
-    background-color: #e8e8e8;
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .book-list-item > .book-cover {
@@ -249,14 +258,18 @@ onMounted(() => {
     margin-top: 4px;
     font-size: 20px;
     line-height: 20px;
-    color: #363636;
+    color: #2d2d2d;
 }
 
 .book-info-panel > .book-info {
     margin: 0;
     margin-top: 8px;
-    color: #808080;
+    color: #525252;
     font-size: 16px;
     line-height: 16px;
+}
+
+.selected {
+    background-color: rgba(0, 0, 0, 0.1);
 }
 </style>

@@ -30,7 +30,7 @@ class Parser {
         let head = document.head;
 
         // 添加样式
-        if (success) {
+        if (success && this.parseType === ParseType.Native) {
             this.cssNames = Object.keys(css);
 
             for (const key of this.cssNames) {

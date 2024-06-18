@@ -63,25 +63,55 @@ onMounted(() => {
                 </g>
             </svg>
         </div>
-        <div>
+        <div class="button-group">
             <div
                 class="titlebar-button titlebar-minimize"
                 id="titlebar-minimize">
-                <img
-                    src="https://api.iconify.design/mdi:window-minimize.svg"
-                    alt="minimize" />
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24">
+                    <path
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13h14" />
+                </svg>
             </div>
             <div
                 class="titlebar-button titlebar-maximize"
                 id="titlebar-maximize">
-                <img
-                    src="https://api.iconify.design/mdi:window-maximize.svg"
-                    alt="maximize" />
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24">
+                    <path
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+                </svg>
             </div>
             <div class="titlebar-button titlebar-close" id="titlebar-close">
-                <img
-                    src="https://api.iconify.design/mdi:close.svg"
-                    alt="close" />
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24">
+                    <path
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M18 6L6 18M6 6l12 12" />
+                </svg>
             </div>
         </div>
     </div>
@@ -89,17 +119,17 @@ onMounted(() => {
 
 <style scoped>
 .titlebar {
-    height: 30px;
+    height: 24px;
     background: transparent;
     user-select: none;
     display: flex;
     justify-content: space-between;
+
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    padding: 0 3px 0 1.5px;
-    /* background-color: green; */
+    padding: 7px 7px 0 7px;
     z-index: 9;
 }
 
@@ -107,19 +137,33 @@ onMounted(() => {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: 26px;
-    height: 26px;
-    margin: 3px 1.5px;
+    width: 24px;
+    height: 24px;
+    /* margin: 1px 1.5px; */
     border-radius: 6px;
-    background-color: rgba(0, 0, 0, 0.05);
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    /* background-color: rgba(0, 0, 0, 0.05); */
+    /* box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1); */
     -webkit-backdrop-filter: blur(1px);
     backdrop-filter: blur(1px);
 }
 
-.titlebar-side > svg {
-    height: 20px;
-    width: 20px;
+.button-group {
+    display: flex;
+    /* gap: 4px; */
+}
+
+.titlebar-maximize {
+    margin-left: 3px;
+}
+
+.titlebar-button svg {
+    height: 22px;
+    width: 22px;
+}
+
+.titlebar-maximize svg {
+    height: 16px;
+    width: 16px;
 }
 
 .titlebar-side {

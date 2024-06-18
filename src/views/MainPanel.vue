@@ -1,9 +1,9 @@
 <script setup lang="ts"></script>
 
 <template>
-    <div>
-        <RouterView class="side" name="side" />
-        <RouterView class="main" name="main" />
+    <div id="main-panel">
+        <RouterView name="side" />
+        <RouterView name="main" />
     </div>
 </template>
 
