@@ -142,7 +142,9 @@ button {
 #main-panel {
     padding: 6px;
     height: calc(100% - 6px * 2);
-    background-color: #b0d5df;
+    /* background-color: #b0d5df; */
+    /* background-color: #83cbac; */
+    background: linear-gradient(180deg, #b0d5df, #63bbd0);
 }
 
 #side {
@@ -150,6 +152,7 @@ button {
     top: 0;
     left: 0;
     right: 0;
+    z-index: 1;
 
     margin: 6px;
     margin-right: 0;
@@ -163,9 +166,12 @@ button {
     overflow: hidden;
     overflow-y: auto;
     box-sizing: border-box;
+    /* 设置 z-index, 确保 #side 层级在 #main 之下, 保证动画层级不会出现异常 */
+    position: relative;
+    z-index: 2;
 
     /* 此处的圆角样式与常用的不同, 主要是为了匹配外边框的圆角 */
-    border-radius: 6px; 
+    border-radius: 6px;
     background-color: white;
     padding: 64px 16px;
 }

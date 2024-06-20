@@ -26,10 +26,16 @@ export function refreshView(showSidebar: boolean, animation: boolean = false) {
         title!.style.left = 250 + "px";
 
         if (animation) {
-            side!.animate([{ left: "-250px" }, { left: "0" }], {
-                duration: 300,
-                easing: "ease-in-out",
-            });
+            side!.animate(
+                [
+                    { opacity: 0.5, transform: "scale(0.85)" },
+                    { opacity: 1, transform: "scale(1)" },
+                ],
+                {
+                    duration: 300,
+                    easing: "ease-in-out",
+                },
+            );
             main!.animate([{ marginLeft: "0" }, { marginLeft: "250px" }], {
                 duration: 300,
                 easing: "ease-in-out",
@@ -55,7 +61,10 @@ export function refreshView(showSidebar: boolean, animation: boolean = false) {
 
         if (animation) {
             const animation = side!.animate(
-                [{ left: "0" }, { left: "-250px" }],
+                [
+                    { opacity: 1, transform: "scale(1)" },
+                    { opacity: 0.5, transform: "scale(0.85)" },
+                ],
                 {
                     duration: 300,
                     easing: "ease-in-out",
