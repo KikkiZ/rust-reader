@@ -3,10 +3,10 @@ import { nextTick, onMounted, ref, watch } from "vue";
 import { invoke } from "@tauri-apps/api/tauri";
 
 import router from "@/router";
-import eventBus from "@/utils/eventBus";
 import { useSettingStore } from "@/store/settingStore";
 import { useAppStateStore } from "@/store/appStateStore";
 import { refreshView } from "@/core/sidebarControl";
+import { notify } from "@/core/notifyService";
 
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
@@ -45,7 +45,7 @@ async function refreshCatalog() {
             catalogList.value.children[0].classList.add("current");
         });
     } else {
-        eventBus.emit("notices", msg);
+        notify(msg);
     }
 }
 

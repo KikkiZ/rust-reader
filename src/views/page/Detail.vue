@@ -6,7 +6,8 @@ import BookInfo from "@/entity/bookInfo";
 import { useAppStateStore } from "@/store/appStateStore";
 import { useSettingStore } from "@/store/settingStore";
 import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
-import eventBus from "@/utils/eventBus";
+import { notify } from "@/core/notifyService";
+
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
 
@@ -28,7 +29,7 @@ async function showDetail(id: string) {
         info.cover_path = convertFileSrc(info.cover_path);
         detail.value = info;
     } else {
-        eventBus.emit("notices", msg);
+        notify(msg);
     }
 }
 

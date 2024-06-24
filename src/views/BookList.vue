@@ -4,7 +4,7 @@ import { invoke, convertFileSrc } from "@tauri-apps/api/tauri";
 import { open } from "@tauri-apps/api/dialog";
 
 import BookInfo from "@/entity/bookInfo";
-import eventBus from "@/utils/eventBus";
+import { notify } from "@/core/notifyService";
 
 const msg = ref("");
 const content = ref("");
@@ -41,7 +41,7 @@ async function itemClick(id: string) {
     if (success) {
         content.value = content;
     } else {
-        eventBus.emit("notices", JSON.parse(msg));
+        notify(msg);
     }
 }
 

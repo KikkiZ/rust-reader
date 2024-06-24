@@ -3,7 +3,7 @@ import { invoke } from "@tauri-apps/api";
 import { onMounted } from "vue";
 
 import TitleBar from "./components/TitleBar.vue";
-import Notification from "./components/Notification.vue";
+// import Notification from "./components/Notification.vue";
 import MainPanel from "./views/MainPanel.vue";
 import { useSettingStore } from "./store/settingStore";
 
@@ -19,6 +19,18 @@ onMounted(async () => {
 
 <template>
     <TitleBar />
-    <Notification />
     <MainPanel />
+    <div id="notification-panel"></div>
 </template>
+
+<style scoped>
+#notification-panel {
+    z-index: 3;
+    position: fixed;
+    bottom: 12px;
+    right: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+</style>

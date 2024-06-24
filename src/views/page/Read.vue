@@ -2,12 +2,12 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
-import eventBus from "@/utils/eventBus";
 import appendPath from "@/utils/commonUtils";
 import { useAppStateStore } from "@/store/appStateStore";
 import { useSettingStore } from "@/store/settingStore";
 import { ParseType, Parser } from "@/core/contentParser";
 import { refreshView } from "@/core/sidebarControl";
+import { notify } from "@/core/notifyService";
 
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
@@ -27,7 +27,7 @@ watch(
         if (success) {
             contentString.value = content;
         } else {
-            eventBus.emit("notices", JSON.parse(msg));
+            notify(msg);
         }
     },
 );
@@ -70,7 +70,7 @@ async function prevPage() {
         contentString.value = content;
         appStateStore.current_chapter -= 1;
     } else {
-        eventBus.emit("notices", JSON.parse(msg));
+        notify(msg);
     }
 }
 
@@ -82,7 +82,7 @@ async function nextPage() {
         contentString.value = content;
         appStateStore.current_chapter += 1;
     } else {
-        eventBus.emit("notices", JSON.parse(msg));
+        notify(msg);
     }
 }
 
@@ -94,7 +94,7 @@ async function openBook(id: string) {
         contentString.value = content;
         appStateStore.current_chapter = 0;
     } else {
-        eventBus.emit("notices", JSON.parse(msg));
+        notify(msg);
     }
 }
 

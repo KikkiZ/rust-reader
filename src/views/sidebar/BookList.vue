@@ -6,10 +6,10 @@ import { open } from "@tauri-apps/api/dialog";
 import BookInfo from "@/entity/bookInfo";
 import Notification from "@/entity/notification";
 import router from "@/router";
-import eventBus from "@/utils/eventBus";
 import { useSettingStore } from "@/store/settingStore";
 import { useAppStateStore } from "@/store/appStateStore";
 import { refreshView } from "@/core/sidebarControl";
+import { notify } from "@/core/notifyService";
 
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
@@ -48,7 +48,7 @@ async function updateBook() {
 
         for (const index in messages) {
             setTimeout(() => {
-                eventBus.emit("notices", messages[index]);
+                notify(messages[index]);
             }, 300 * parseInt(index));
         }
 
