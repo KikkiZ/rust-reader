@@ -9,32 +9,46 @@ use crate::utils::config_utils::Config;
 
 const DIR_LIST: [&str; 3] = ["book", "cover", "resources"];
 
-/// 资源完整性检查
 #[cfg(target_os = "windows")]
+fn data_dir() -> PathBuf {
+    // PathBuf::from(env::var("APPDATA").unwrap())
+    let mut path = PathBuf::from(env::var("LOCALAPPDATA").unwrap());
+    path.push("Reader");
+    
+    path
+}
+
+#[cfg(target_os = "linux")]
+fn data_dir() -> PathBuf {
+    let mut path = PathBuf::from(env::var("HOME").unwrap());
+    path.push(".Reader");
+
+    path
+}
+
+/// 资源完整性检查
 pub fn resource_integrity_check() {
-    let mut dir = PathBuf::from(env::var("LOCALAPPDATA").unwrap());
-    // let mut dir = PathBuf::from(env::var("APPDATA").unwrap());
-    dir.push("Reader");
+    let mut dir = data_dir();
 
     // 检查目录完整性
-    for name in DIR_LIST {
-        dir_check(&mut dir, name);
-    }
+    dir_check(&mut dir);
 
     // 检查相关文件完整性
     config_check(&mut dir);
     book_info_check(&mut dir);
 }
 
-fn dir_check(path: &mut PathBuf, name: &str) {
-    path.push(name);
+fn dir_check(path: &mut PathBuf) {
+    for name in DIR_LIST {
+        path.push(name);
 
-    if !path.exists() {
-        println!("Create dir: {:?}", path);
-        create_dir_all(&path).unwrap();
+        if !path.exists() {
+            println!("Create dir: {:?}", path);
+            create_dir_all(&path).unwrap();
+        }
+
+        path.pop();
     }
-
-    path.pop();
 }
 
 fn config_check(path: &mut PathBuf) {
@@ -42,14 +56,19 @@ fn config_check(path: &mut PathBuf) {
 
     if !path.exists() {
         println!("Create config.yml");
-        let data_dir = env::var("LOCALAPPDATA").unwrap();
         let mut file = File::create(&path).expect("Failed to create config.yml");
         let mut config = Config::default();
+        let dir = {
+            let mut temp = path.clone();
+            temp.pop();
 
-        config.book.info = format!("{}\\Reader\\book_info.json", data_dir);
-        config.book.dir = format!("{}\\Reader\\book", data_dir);
-        config.book.cover = format!("{}\\Reader\\cover", data_dir);
-        config.book.resources = format!("{}\\Reader\\resources", data_dir);
+            temp.to_str().unwrap().to_owned()
+        };
+
+        config.book.info = format!("{}\\book_info.json", dir);
+        config.book.dir = format!("{}\\book", dir);
+        config.book.cover = format!("{}\\cover", dir);
+        config.book.resources = format!("{}\\resources", dir);
 
         file.write_all(serde_yml::to_string(&config).unwrap().as_bytes())
             .expect("Something wrong with config.yml");
