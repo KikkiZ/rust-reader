@@ -3,6 +3,7 @@ import { onMounted, ref, watch } from "vue";
 import { invoke, convertFileSrc } from "@tauri-apps/api/tauri";
 import { open } from "@tauri-apps/api/dialog";
 
+import ToolBox from "@/components/ToolBox.vue";
 import BookInfo from "@/entity/bookInfo";
 import Notification from "@/entity/notification";
 import router from "@/router";
@@ -171,6 +172,7 @@ onMounted(() => {
                     d="M12 19H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4l3 3h7a2 2 0 0 1 2 2v3.5M19 22v-6m3 3l-3-3l-3 3" />
             </svg>
         </button>
+        <ToolBox class="mt-8"/>
     </div>
 </template>
 

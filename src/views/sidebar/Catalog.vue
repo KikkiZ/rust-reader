@@ -7,6 +7,7 @@ import { useSettingStore } from "@/store/settingStore";
 import { useAppStateStore } from "@/store/appStateStore";
 import { refreshView } from "@/core/sidebarControl";
 import { notify } from "@/core/notifyService";
+import ToolBox from "@/components/ToolBox.vue";
 
 const settingStore = useSettingStore();
 const appStateStore = useAppStateStore();
@@ -61,16 +62,16 @@ onMounted(() => {
 
 <template>
     <div class="sidebar" id="side">
-        <button @click="back()" v-slide-in>back</button>
+        <button @click="back()">back</button>
         <div class="catalog" ref="catalogList">
             <div
                 v-for="(item, index) in catalog"
                 @click="appStateStore.current_chapter = index"
-                class="catalog-item"
-                v-slide-in>
+                class="catalog-item">
                 <p>{{ item }}</p>
             </div>
         </div>
+        <ToolBox />
     </div>
 </template>
 
