@@ -25,7 +25,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="main" id="main">
+    <div class="main">
         <h1 class="greet">
             {{ greetString }}
         </h1>

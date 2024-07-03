@@ -2,9 +2,13 @@
 
 <template>
     <div id="main-panel">
-        <RouterView name="side" />
-        <RouterView name="main" />
+        <div id="side">
+            <RouterView name="side" />
+        </div>
+        <div id="main">
+            <RouterView name="main" />
+        </div>
     </div>
 </template>
 
-<style></style>
+<style scoped></style>

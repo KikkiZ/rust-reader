@@ -2,7 +2,6 @@
 import { nextTick, onMounted, ref, watch } from "vue";
 import { invoke } from "@tauri-apps/api/tauri";
 
-import router from "@/router";
 import { useSettingStore } from "@/store/settingStore";
 import { useAppStateStore } from "@/store/appStateStore";
 import { refreshView } from "@/core/sidebarControl";
@@ -50,10 +49,6 @@ async function refreshCatalog() {
     }
 }
 
-function back() {
-    router.push("/list");
-}
-
 onMounted(() => {
     refreshView(settingStore.show_side_bar);
     refreshCatalog();
@@ -61,8 +56,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="sidebar" id="side">
-        <button @click="back()">back</button>
+    <div class="sidebar">
         <div class="catalog" ref="catalogList">
             <div
                 v-for="(item, index) in catalog"
@@ -84,7 +78,6 @@ onMounted(() => {
 
 .catalog {
     padding: 0;
-    margin: 8px 0;
     display: flex;
     flex-direction: column;
     gap: 4px;

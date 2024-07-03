@@ -40,7 +40,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div id="main" class="detail">
+    <div class="detail">
         <div class="cover">
             <img :src="detail?.cover_path" />
         </div>

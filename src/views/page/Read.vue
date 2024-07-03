@@ -116,7 +116,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="main" id="main" ref="main">
+    <div class="main" ref="main">
         <div id="content" v-html="contentString"></div>
 
         <div class="row" v-show="contentString">

@@ -7,13 +7,14 @@ import TitleBar from "./components/TitleBar.vue";
 import MainPanel from "./views/MainPanel.vue";
 import { useSettingStore } from "./store/settingStore";
 
+const settingStore = useSettingStore();
+
 // 初始化 view
 onMounted(async () => {
     const result: string = await invoke("get_config");
     const config = JSON.parse(result);
 
-    const setting = useSettingStore();
-    setting.show_side_bar = config.setting.sidebar as boolean;
+    settingStore.show_side_bar = config.setting.sidebar as boolean;
 });
 </script>
 

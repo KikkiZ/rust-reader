@@ -116,7 +116,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="sidebar" id="side">
+    <div class="sidebar">
         <form class="search-form" @submit.prevent="searchBook" ref="form">
             <input type="text" v-model="keyWord" placeholder="Search book..." />
             <button type="submit" class="search-button">
@@ -184,20 +184,22 @@ onMounted(() => {
 }
 
 .search-form {
-    width: 244px;
+    width: auto;
 
     top: 0;
     position: sticky;
 }
 
 .search-form > input {
-    width: 168px;
+    box-sizing: border-box;
+    width: 198px;
     height: 40px;
     padding: 0 15px;
     border: 1px solid #e8e8e8;
 }
 
 .search-form > button {
+    box-sizing: border-box;
     width: 40px;
     height: 40px;
     padding: 0;

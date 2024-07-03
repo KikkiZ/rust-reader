@@ -8,7 +8,6 @@ export default {
         watch(
             () => settingStore.show_side_bar,
             (newValue, oldValue) => {
-                console.log(newValue, oldValue);
                 refreshView(newValue, newValue !== oldValue);
             },
         );
@@ -18,12 +17,9 @@ export default {
 export function refreshView(showSidebar: boolean, animation: boolean = false) {
     const side = document.getElementById("side");
     const main = document.getElementById("main");
-    const title = document.getElementById("title");
 
     if (showSidebar) {
         side!.style.display = "block";
-        main!.style.marginLeft = 250 + "px";
-        title!.style.left = 250 + "px";
 
         if (animation) {
             side!.animate(
@@ -36,28 +32,13 @@ export function refreshView(showSidebar: boolean, animation: boolean = false) {
                     easing: "ease-in-out",
                 },
             );
-            main!.animate([{ marginLeft: "0" }, { marginLeft: "250px" }], {
+            main!.animate([{ marginLeft: "-250px" }, { marginLeft: "0" }], {
                 duration: 300,
                 easing: "ease-in-out",
             });
-            title!.animate(
-                [
-                    {
-                        left: 0,
-                    },
-                    {
-                        left: "250px",
-                    },
-                ],
-                {
-                    duration: 300,
-                    easing: "ease-in-out",
-                },
-            );
         }
+
     } else {
-        main!.style.marginLeft = "0";
-        title!.style.left = "0";
 
         if (animation) {
             const animation = side!.animate(
@@ -70,28 +51,15 @@ export function refreshView(showSidebar: boolean, animation: boolean = false) {
                     easing: "ease-in-out",
                 },
             );
-            main!.animate([{ marginLeft: "250px" }, { marginLeft: "0" }], {
+            main!.animate([{ marginLeft: "0" }, { marginLeft: "-250px" }], {
                 duration: 300,
                 easing: "ease-in-out",
             });
-            title!.animate(
-                [
-                    {
-                        left: "250px",
-                    },
-                    {
-                        left: 0,
-                    },
-                ],
-                {
-                    duration: 300,
-                    easing: "ease-in-out",
-                },
-            );
 
             animation.onfinish = () => {
                 side!.style.display = "none";
             };
+
         } else {
             side!.style.display = "none";
         }
