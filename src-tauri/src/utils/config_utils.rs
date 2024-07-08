@@ -1,16 +1,20 @@
-use std::{env, fs::File, io::Read};
+use std::{
+    env,
+    fs::File,
+    io::{Read, Write},
+};
 
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default, PartialEq, Eq)]
 pub struct Config {
     pub book: BookData,
     pub theme: Theme,
     pub setting: Setting,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default, PartialEq, Eq)]
 pub struct BookData {
     pub info: String,
     pub dir: String,
@@ -18,12 +22,12 @@ pub struct BookData {
     pub resources: String,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default, PartialEq, Eq)]
 pub struct Theme {
     pub appearance: Appearance,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default, PartialEq, Eq)]
 pub enum Appearance {
     #[default]
     Light,
@@ -31,27 +35,43 @@ pub enum Appearance {
     System,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
 pub struct Setting {
     pub sidebar: bool,
 }
 
 impl Default for Setting {
     fn default() -> Self {
-        Self {
-            sidebar: true,
-        }
+        Self { sidebar: true }
     }
 }
 
 lazy_static! {
-    pub static ref GLOBAL_CONFIG: Config = {
-        let config_path = format!("{}\\Reader\\config.yml", env::var("LOCALAPPDATA").unwrap());
-        let mut file = File::open(config_path).expect("Failed to open config file.");
-        let mut content = String::new();
-        file.read_to_string(&mut content)
-            .expect("Failed to read file");
-
-        serde_yml::from_str(&content).expect("Failed to parse YAML")
+    #[derive(Debug)]
+    static ref CONFIG_PATH: String = {
+        if cfg!(target_os = "windows") {
+            format!("{}\\Reader\\config.yml", env::var("LOCALAPPDATA").unwrap())
+        } else if cfg!(target_os = "linux") {
+            format!("{}/.Reader/config.yml", env::var("HOME").unwrap())
+        } else {
+            panic!("unsupported platform")
+        }
     };
+}
+
+pub fn read_config() -> Config {
+    let mut file = File::open(CONFIG_PATH.as_str()).expect("Failed to open config file.");
+    let mut content = String::new();
+    file.read_to_string(&mut content)
+        .expect("Failed to read file");
+
+    serde_yml::from_str(&content).expect("Failed to parse YAML")
+}
+
+pub fn save_config(config: Config) {
+    let content = serde_yml::to_string(&config).unwrap();
+
+    let mut file = File::create(CONFIG_PATH.as_str()).expect("Failed to create config file.");
+    file.write_all(content.as_bytes())
+        .expect("Failed to write to file");
 }

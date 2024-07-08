@@ -8,7 +8,7 @@ use std::{
 use epub::doc::EpubDoc;
 use serde::{Deserialize, Serialize};
 
-use crate::utils::{common_utils::hash, config_utils::GLOBAL_CONFIG};
+use crate::utils::{common_utils::hash, config_utils::read_config};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BookInfo {
@@ -51,13 +51,13 @@ impl BookInfo {
         let hash_code = hash(&path);
         let mut book = EpubDoc::new(path).unwrap();
 
-        let mut file_path = PathBuf::from(GLOBAL_CONFIG.book.dir.clone());
+        let mut file_path = PathBuf::from(read_config().book.dir.clone());
         file_path.push(hash_code.clone() + ".epub");
 
         let cover_data = book.get_cover().unwrap();
         let mime: mime::Mime = cover_data.1.parse().unwrap();
         let subtype = mime.subtype().as_str();
-        let mut cover_path = PathBuf::from(GLOBAL_CONFIG.book.cover.clone());
+        let mut cover_path = PathBuf::from(read_config().book.cover.clone());
         cover_path.push(hash_code.clone() + "." + subtype);
 
         let metadata = book.metadata.clone();
@@ -78,7 +78,7 @@ impl BookInfo {
     }
 
     pub fn get_info_list() -> Vec<BookInfo> {
-        let book_info = GLOBAL_CONFIG.book.info.clone();
+        let book_info = read_config().book.info.clone();
 
         match fs::read_to_string(book_info) {
             Ok(content) => serde_json::from_str(&content).expect("Failed to parse JSON"),
@@ -88,7 +88,7 @@ impl BookInfo {
 
     pub fn save_info_list(list: &Vec<BookInfo>) {
         let json = serde_json::to_string(list).unwrap();
-        let book_info = GLOBAL_CONFIG.book.info.clone();
+        let book_info = read_config().book.info.clone();
         std::fs::write(book_info, json).expect("Unable to write file");
     }
 }

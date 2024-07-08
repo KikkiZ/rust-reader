@@ -14,6 +14,7 @@ pub fn get_handlers() -> impl Fn(tauri::Invoke) {
         book_handler::get_css,
         book_list_handler::book_list,
         config_handler::get_config,
+        config_handler::update_config,
         config_handler::get_resource_path,
         read_handler::prev_page,
         read_handler::next_page,

@@ -15,7 +15,7 @@ use crate::{
     },
     utils::{
         common_utils::{json_to_string, time_stamp},
-        config_utils::GLOBAL_CONFIG,
+        config_utils::read_config,
     },
 };
 
@@ -34,7 +34,7 @@ use super::CURRENT_BOOK;
 #[tauri::command]
 pub fn book_detail(id: &str) -> String {
     let result;
-    let book_info = GLOBAL_CONFIG.book.info.clone();
+    let book_info = read_config().book.info.clone();
 
     match fs::read_to_string(book_info) {
         Ok(content) => {
@@ -185,7 +185,7 @@ fn save_cover(info: &BookInfo, book: &mut EpubDoc<BufReader<File>>) {
     let (cover, mime) = book.get_cover().unwrap();
 
     let mime: mime::Mime = mime.parse().unwrap();
-    let mut path = PathBuf::from(GLOBAL_CONFIG.book.cover.clone());
+    let mut path = PathBuf::from(read_config().book.cover.clone());
     let cover_name = info.id.clone() + "." + mime.subtype().as_str();
     path.push(cover_name);
 
@@ -197,7 +197,7 @@ fn save_cover(info: &BookInfo, book: &mut EpubDoc<BufReader<File>>) {
 
 fn save_book(info: &BookInfo, path: &str) {
     let book_name = info.id.clone() + ".epub";
-    let mut book_path = PathBuf::from(GLOBAL_CONFIG.book.dir.clone());
+    let mut book_path = PathBuf::from(read_config().book.dir.clone());
     book_path.push(book_name);
 
     let mut src_file = File::open(path).unwrap();
@@ -208,9 +208,8 @@ fn save_book(info: &BookInfo, path: &str) {
 }
 
 fn save_resources(info: &BookInfo, book: &mut EpubDoc<BufReader<File>>) {
-    // let mut image_list = Vec::new();
     let resources = book.resources.clone();
-    let mut resources_path = PathBuf::from(&GLOBAL_CONFIG.book.resources.clone());
+    let mut resources_path = PathBuf::from(read_config().book.resources.clone());
     resources_path = resources_path.join(info.id.as_str());
 
     for (_, (path, mime)) in resources.iter() {
