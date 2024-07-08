@@ -1,12 +1,12 @@
-import { useSettingStore } from "@/store/settingStore";
+import { useConfigStore } from "@/store/configStore";
 import { watch } from "vue";
 
 export default {
     install() {
-        const settingStore = useSettingStore();
+        const configStore = useConfigStore();
 
         watch(
-            () => settingStore.show_side_bar,
+            () => configStore.setting.sidebar,
             (newValue, oldValue) => {
                 refreshView(newValue, newValue !== oldValue);
             },

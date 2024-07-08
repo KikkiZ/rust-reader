@@ -4,12 +4,12 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 import appendPath from "@/utils/commonUtils";
 import { useAppStateStore } from "@/store/appStateStore";
-import { useSettingStore } from "@/store/settingStore";
+import { useConfigStore } from "@/store/configStore";
 import { ParseType, Parser } from "@/core/contentParser";
 import { refreshView } from "@/core/sidebarControl";
 import { notify } from "@/core/notifyService";
 
-const settingStore = useSettingStore();
+const configStore = useConfigStore();
 const appStateStore = useAppStateStore();
 
 const main = ref();
@@ -99,7 +99,7 @@ async function openBook(id: string) {
 }
 
 onMounted(async () => {
-    refreshView(settingStore.show_side_bar);
+    refreshView(configStore.setting.sidebar);
 
     // TODO: 调整接口用法
     const path: string = await invoke("get_resource_path");

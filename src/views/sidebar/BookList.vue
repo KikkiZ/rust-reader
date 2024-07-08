@@ -7,12 +7,12 @@ import ToolBox from "@/components/ToolBox.vue";
 import BookInfo from "@/entity/bookInfo";
 import Notification from "@/entity/notification";
 import router from "@/router";
-import { useSettingStore } from "@/store/settingStore";
+import { useConfigStore } from "@/store/configStore";
 import { useAppStateStore } from "@/store/appStateStore";
 import { refreshView } from "@/core/sidebarControl";
 import { notify } from "@/core/notifyService";
 
-const settingStore = useSettingStore();
+const configStore = useConfigStore();
 const appStateStore = useAppStateStore();
 
 const form = ref();
@@ -110,7 +110,7 @@ function openBook(id: string) {
 }
 
 onMounted(() => {
-    refreshView(settingStore.show_side_bar);
+    refreshView(configStore.setting.sidebar);
     getBookList();
 });
 </script>

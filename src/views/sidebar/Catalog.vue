@@ -2,13 +2,13 @@
 import { nextTick, onMounted, ref, watch } from "vue";
 import { invoke } from "@tauri-apps/api/tauri";
 
-import { useSettingStore } from "@/store/settingStore";
+import { useConfigStore } from "@/store/configStore";
 import { useAppStateStore } from "@/store/appStateStore";
 import { refreshView } from "@/core/sidebarControl";
 import { notify } from "@/core/notifyService";
 import ToolBox from "@/components/ToolBox.vue";
 
-const settingStore = useSettingStore();
+const configStore = useConfigStore();
 const appStateStore = useAppStateStore();
 
 const catalogList = ref();
@@ -50,7 +50,7 @@ async function refreshCatalog() {
 }
 
 onMounted(() => {
-    refreshView(settingStore.show_side_bar);
+    refreshView(configStore.setting.sidebar);
     refreshCatalog();
 });
 </script>

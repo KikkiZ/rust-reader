@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { refreshView } from "@/core/sidebarControl";
 import { onMounted, ref, watch } from "vue";
+import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
 
 import BookInfo from "@/entity/bookInfo";
 import { useAppStateStore } from "@/store/appStateStore";
-import { useSettingStore } from "@/store/settingStore";
-import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
+import { useConfigStore } from "@/store/configStore";
 import { notify } from "@/core/notifyService";
+import { refreshView } from "@/core/sidebarControl";
 
-const settingStore = useSettingStore();
+const configStore = useConfigStore();
 const appStateStore = useAppStateStore();
 
 const detail = ref<BookInfo>();
@@ -34,7 +34,7 @@ async function showDetail(id: string) {
 }
 
 onMounted(() => {
-    refreshView(settingStore.show_side_bar);
+    refreshView(configStore.setting.sidebar);
     showDetail(appStateStore.current_book_id);
 });
 </script>

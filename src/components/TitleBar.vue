@@ -2,9 +2,9 @@
 import { appWindow } from "@tauri-apps/api/window";
 
 import router from "@/router";
-import { useSettingStore } from "@/store/settingStore";
+import { useConfigStore } from "@/store/configStore";
 
-const settingStore = useSettingStore();
+const configStore = useConfigStore();
 </script>
 
 <template>
@@ -59,10 +59,10 @@ const settingStore = useSettingStore();
             <div
                 class="titlebar-button titlebar-side"
                 @click="
-                    settingStore.show_side_bar = !settingStore.show_side_bar
+                    configStore.setting.sidebar = !configStore.setting.sidebar
                 ">
                 <svg
-                    v-show="!settingStore.show_side_bar"
+                    v-show="!configStore.setting.sidebar"
                     xmlns="http://www.w3.org/2000/svg"
                     width="1em"
                     height="1em"
@@ -79,7 +79,7 @@ const settingStore = useSettingStore();
                     </g>
                 </svg>
                 <svg
-                    v-show="settingStore.show_side_bar"
+                    v-show="configStore.setting.sidebar"
                     xmlns="http://www.w3.org/2000/svg"
                     width="1em"
                     height="1em"

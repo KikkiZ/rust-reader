@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 
-import { useSettingStore } from "@/store/settingStore";
+import { useConfigStore } from "@/store/configStore";
 import { refreshView } from "@/core/sidebarControl";
 
-const settingStore = useSettingStore();
+const configStore = useConfigStore();
 
 const greetString = ref("");
 
 onMounted(() => {
-    refreshView(settingStore.show_side_bar);
+    refreshView(configStore.setting.sidebar);
 
     const hour = new Date().getHours();
     if (hour >= 0 && hour < 6) {
