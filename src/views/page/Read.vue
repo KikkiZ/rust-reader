@@ -5,7 +5,7 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import appendPath from "@/utils/commonUtils";
 import { useAppStateStore } from "@/store/appStateStore";
 import { useConfigStore } from "@/store/configStore";
-import { ParseType, Parser } from "@/core/contentParser";
+import { Parser } from "@/core/contentParser";
 import { refreshView } from "@/core/sidebarControl";
 import { notify } from "@/core/notifyService";
 
@@ -107,7 +107,7 @@ onMounted(async () => {
 
     openBook(appStateStore.current_book_id);
 
-    contentParser.value = new Parser(resourcePath, ParseType.Optimize);
+    contentParser.value = new Parser(resourcePath);
 });
 
 onBeforeUnmount(() => {

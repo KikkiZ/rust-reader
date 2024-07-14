@@ -17,9 +17,21 @@
     src: url("@/assets/fonts/LXGWWenKaiGBScreen.ttf");
 }
 
+.optimize-content * {
+    margin: 0;
+    padding: 6px;
+    line-height: normal;
+}
+
+.optimize-content *:hover {
+    background-color: rgba(0, 0, 0, 0.09);
+    border-radius: 6px;
+}
+
 .optimize-content h1,
 .optimize-content h2 {
     text-align: center;
+    margin: 0.75em 0;
 }
 
 .optimize-content h3,
@@ -27,9 +39,15 @@
 .optimize-content h5,
 .optimize-content h6 {
     text-align: start;
+    margin: 0.5em 0;
 }
 
 .optimize-content p {
     text-indent: 2em;
     text-align: justify;
+    margin: 0.5em 0;
+}
+
+.optimize-content .block {
+    display: block;
 }
