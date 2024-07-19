@@ -43,7 +43,7 @@ pub struct BookInfo {
     pub description: String,
 
     /// 本书上次打开的时间
-    pub last_open: u128,
+    pub last_open: u64,
 }
 
 impl BookInfo {

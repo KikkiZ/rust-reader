@@ -52,9 +52,9 @@ where
 }
 
 /// Returns the current time in milliseconds
-pub fn time_stamp() -> u128 {
+pub fn time_stamp() -> u64 {
     match SystemTime::now().duration_since(SystemTime::UNIX_EPOCH) {
-        Ok(elapsed) => elapsed.as_millis(),
+        Ok(elapsed) => elapsed.as_millis() as u64,
         Err(_) => 0,
     }
 }
