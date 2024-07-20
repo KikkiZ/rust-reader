@@ -1,14 +1,13 @@
-use std::{
-    collections::HashMap,
-    fmt::Display,
-    fs::{self},
-    path::PathBuf,
-};
+use std::{collections::HashMap, fmt::Display, path::PathBuf};
 
 use epub::doc::EpubDoc;
+use rusqlite::{params, Error};
 use serde::{Deserialize, Serialize};
 
-use crate::utils::{common_utils::hash, config_utils::read_config};
+use crate::{
+    utils::{common_utils::hash, config_utils::read_config},
+    CONN,
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BookInfo {
@@ -77,19 +76,130 @@ impl BookInfo {
         }
     }
 
-    pub fn get_info_list() -> Vec<BookInfo> {
-        let book_info = read_config().book.info.clone();
+    pub fn get_info_list() -> Result<Vec<BookInfo>, Error> {
+        let conn = CONN.lock().unwrap();
 
-        match fs::read_to_string(book_info) {
-            Ok(content) => serde_json::from_str(&content).expect("Failed to parse JSON"),
-            Err(_) => panic!(),
+        let sql = "SELECT * FROM book_info;";
+        let mut stmt = conn.prepare(sql).unwrap();
+        let rows = stmt
+            .query_map([], |row| {
+                Ok(BookInfo {
+                    id: row.get(0).unwrap(),
+                    file_path: PathBuf::from(row.get::<usize, String>(1).unwrap()),
+                    cover_path: PathBuf::from(row.get::<usize, String>(2).unwrap()),
+                    title: row.get(3).unwrap(),
+                    creator: row.get(4).unwrap(),
+                    date: row.get(5).unwrap(),
+                    publisher: row.get(6).unwrap(),
+                    language: row.get(7).unwrap(),
+                    subject: row.get(8).unwrap(),
+                    description: row.get(9).unwrap(),
+                    last_open: row.get(10).unwrap(),
+                })
+            })
+            .unwrap();
+
+        let mut list = Vec::new();
+        for row in rows {
+            match row {
+                Ok(info) => list.push(info),
+                Err(err) => return Err(err),
+            }
+        }
+
+        Ok(list)
+    }
+
+    pub fn get_specific_info(id: &str) -> Result<BookInfo, Error> {
+        let conn = CONN.lock().unwrap();
+
+        let sql = "SELECT * FROM book_info WHERE id = ?1;";
+        conn.query_row(sql, [id], |row| {
+            Ok(BookInfo {
+                id: row.get(0).unwrap(),
+                file_path: PathBuf::from(row.get::<usize, String>(1).unwrap()),
+                cover_path: PathBuf::from(row.get::<usize, String>(2).unwrap()),
+                title: row.get(3).unwrap(),
+                creator: row.get(4).unwrap(),
+                date: row.get(5).unwrap(),
+                publisher: row.get(6).unwrap(),
+                language: row.get(7).unwrap(),
+                subject: row.get(8).unwrap(),
+                description: row.get(9).unwrap(),
+                last_open: row.get(10).unwrap(),
+            })
+        })
+    }
+
+    pub fn insert_info(info: &Self) -> bool {
+        let conn = CONN.lock().unwrap();
+
+        let sql = "INSERT INTO book_info ( 
+                            id, 
+                            file_path, 
+                            cover_path, 
+                            title, 
+                            creator, 
+                            date, 
+                            publisher, 
+                            language, 
+                            subject, 
+                            description, 
+                            last_open) 
+                        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);";
+        let params = params![
+            info.id,
+            info.file_path.to_str().unwrap(),
+            info.cover_path.to_str().unwrap(),
+            info.title,
+            info.creator,
+            info.date,
+            info.publisher,
+            info.language,
+            info.subject,
+            info.description,
+            info.last_open.to_string(),
+        ];
+
+        match conn.execute(sql, params) {
+            Ok(_) => true,
+            Err(_) => false,
         }
     }
 
-    pub fn save_info_list(list: &Vec<BookInfo>) {
-        let json = serde_json::to_string(list).unwrap();
-        let book_info = read_config().book.info.clone();
-        std::fs::write(book_info, json).expect("Unable to write file");
+    pub fn update_info(info: &Self) -> bool {
+        let conn = CONN.lock().unwrap();
+
+        let sql = "UPDATE book_info SET
+                            file_path = ?1, 
+                            cover_path = ?2, 
+                            title = ?3, 
+                            creator = ?4, 
+                            date = ?5, 
+                            publisher = ?6, 
+                            language = ?7, 
+                            subject = ?8, 
+                            description = ?9, 
+                            last_open = ?10
+                        WHERE id = ?11;";
+        let params = params![
+            info.file_path.to_str().unwrap(),
+            info.cover_path.to_str().unwrap(),
+            info.title,
+            info.creator,
+            info.date,
+            info.publisher,
+            info.language,
+            info.subject,
+            info.description,
+            info.last_open.to_string(),
+            info.id,
+        ];
+
+        match conn.execute(sql, params) {
+            Ok(1) => true,
+            Ok(_) | Err(_) => false,
+        }
     }
 }
 

@@ -1,13 +1,11 @@
-use std::fs;
-
-use crate::utils::config_utils::read_config;
+use crate::entity::bookinfo::BookInfo;
 
 #[tauri::command]
 pub fn book_list() -> String {
-    let book_info = read_config().book.info;
-
-    match fs::read_to_string(book_info) {
-        Ok(content) => content,
+    let list = BookInfo::get_info_list();
+    match list {
+        Ok(list) => serde_json::to_string(&list).unwrap(),
+        // TODO: 这里需要处理错误
         Err(_) => panic!(),
     }
 }

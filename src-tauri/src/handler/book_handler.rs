@@ -1,10 +1,11 @@
 use std::{
-    fs::{self, create_dir_all, File},
+    fs::{create_dir_all, File},
     io::{BufReader, Read, Write},
     path::{Path, PathBuf},
 };
 
 use epub::doc::EpubDoc;
+use rusqlite::Error as SqlError;
 use serde_json::json;
 
 use crate::{
@@ -34,35 +35,29 @@ use super::CURRENT_BOOK;
 #[tauri::command]
 pub fn book_detail(id: &str) -> String {
     let result;
-    let book_info = read_config().book.info.clone();
 
-    match fs::read_to_string(book_info) {
-        Ok(content) => {
-            let book_list: Vec<BookInfo> = serde_json::from_str(&content).unwrap();
-            let info = book_list.iter().find(|book| book.id == id);
+    // TODO: 重构方法
+    match BookInfo::get_specific_info(id) {
+        Ok(info) => {
+            result = json!({
+                "exist": true,
+                "info": info,
+            })
+        }
+        Err(SqlError::QueryReturnedNoRows) => {
+            let msg = Notification {
+                r#type: NotificationType::Warn,
+                title: "Warn".to_string(),
+                msg: "No such book".to_string(),
+            };
 
-            match info {
-                Some(info) => {
-                    result = json!({
-                        "exist": true,
-                        "info": info,
-                    })
-                }
-                None => {
-                    let msg = Notification {
-                        r#type: NotificationType::Warn,
-                        title: "Warn".to_string(),
-                        msg: "No such book".to_string(),
-                    };
-
-                    result = json!({
-                        "exist": false,
-                        "msg": msg,
-                    })
-                }
-            }
+            result = json!({
+                "exist": false,
+                "msg": msg,
+            })
         }
         Err(_) => {
+            // TODO: 处理错误
             let msg = Notification {
                 r#type: NotificationType::Err,
                 title: "Error".to_string(),
@@ -73,6 +68,7 @@ pub fn book_detail(id: &str) -> String {
                 "exist": false,
                 "msg": msg,
             })
+            // panic!("{}", err);
         }
     }
 
@@ -92,24 +88,24 @@ pub fn book_detail(id: &str) -> String {
 #[tauri::command]
 pub fn open_book(id: &str) -> String {
     let result;
-    let mut books = BookInfo::get_info_list();
 
-    match books.iter_mut().find(|book| book.id == id) {
-        Some(info) => unsafe {
+    match BookInfo::get_specific_info(id) {
+        Ok(mut info) => unsafe {
             let mut book = Epub::new(&info.file_path);
 
             info.last_open = time_stamp(); // 更新最后一次打开时间(time_stamp)
             book.info = info.clone(); // 同步bookinfo
             CURRENT_BOOK = Some(book);
 
-            BookInfo::save_info_list(&books); // 保存更新后的信息
+            BookInfo::update_info(&info); // 保存更新后的信息
 
             result = json!({
                 "success": true,
                 "content": CURRENT_BOOK.as_mut().unwrap().get_current_page(),
             });
         },
-        None => {
+        // 查询不到指定数据
+        Err(SqlError::QueryReturnedNoRows) => {
             let msg = Notification {
                 r#type: NotificationType::Err,
                 title: "Error".to_string(),
@@ -121,6 +117,8 @@ pub fn open_book(id: &str) -> String {
                 "msg": msg,
             });
         }
+        // TODO: 处理错误
+        Err(err) => panic!("{}", err),
     }
 
     json_to_string(&result)
@@ -134,7 +132,6 @@ pub fn open_book(id: &str) -> String {
 #[tauri::command]
 pub fn update_new_book(paths: Vec<&str>) -> String {
     let mut messages = Vec::new();
-    let mut list = BookInfo::get_info_list();
     let mut title_list = Vec::new();
 
     for path in paths {
@@ -149,7 +146,7 @@ pub fn update_new_book(paths: Vec<&str>) -> String {
 
         info.last_open = time_stamp();
 
-        if list.contains(&info) {
+        if !BookInfo::insert_info(&info) {
             messages.push(Notification {
                 r#type: NotificationType::Warn,
                 title: "Warn".to_string(),
@@ -164,11 +161,7 @@ pub fn update_new_book(paths: Vec<&str>) -> String {
         save_cover(&info, &mut book);
         save_book(&info, path.to_str().unwrap());
         save_resources(&info, &mut book);
-
-        list.push(info);
     }
-
-    BookInfo::save_info_list(&list);
 
     if title_list.len() != 0 {
         messages.push(Notification {

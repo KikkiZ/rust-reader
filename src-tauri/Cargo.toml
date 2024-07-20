@@ -34,7 +34,7 @@ scraper = "0.19.0"
 crypto-hash = "0.3.4"
 mime = "0.3.17"
 lazy_static = "1.4.0"
-rusqlite = "0.31.0"
+rusqlite = { version = "0.31.0", features = ["bundled"] }
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

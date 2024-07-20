@@ -11,6 +11,8 @@ fn main() {
     // println!("{:?}", rust_reader::utils::config_utils::GLOBAL_CONFIG.book);
     // println!("{:?}", GLOBAL_CONFIG.theme);
     // println!("{:?}", GLOBAL_CONFIG.setting);
+    
+    // TODO: 重构 bookinfo 存取方式
 
     tauri::Builder::default()
         .setup(|app| {
