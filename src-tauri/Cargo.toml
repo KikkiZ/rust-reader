@@ -8,10 +8,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1", features = [] }
+tauri-build = { version = "1.5.3", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [
+tauri = { version = "1.7.1", features = [
     "protocol-asset",
     "dialog-all",
     "window-start-dragging",
@@ -25,16 +25,19 @@ tauri = { version = "1", features = [
     "shell-open",
     # "devtools",
 ] }
-serde = { version = "1", features = ["derive"] }
-serde_yml = "0.0.10"
-serde_json = "1"
-epub = "2.1"
-window-shadows = "0.2.1"
-scraper = "0.19.0"
+serde = { version = "1.0.204", features = ["derive"] }
+serde_yml = "0.0.11"
+serde_json = "1.0.120"
+epub = "2.1.2"
+window-shadows = "0.2.2"
+scraper = "0.19.1"
 crypto-hash = "0.3.4"
 mime = "0.3.17"
-lazy_static = "1.4.0"
-rusqlite = { version = "0.31.0", features = ["bundled"] }
+lazy_static = "1.5.0"
+rusqlite = { version = "0.32.0", features = ["bundled"] }
+log = "0.4.22"
+flexi_logger = "0.28.5"
+ctor = "0.2.8"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
