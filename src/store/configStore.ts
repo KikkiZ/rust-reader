@@ -7,6 +7,7 @@ import pinia from ".";
 export const useConfigStore = defineStore("config", {
     state: () => {
         const database = ref("");
+        const log = ref("");
         const book = reactive({
             info: ref(""),
             dir: ref(""),
@@ -20,20 +21,22 @@ export const useConfigStore = defineStore("config", {
             sidebar: ref(true),
         });
 
-        return { database, book, theme, setting };
+        return { database, log, book, theme, setting };
     },
 
     actions: {
         // 初始化 store
         initStore(data: {
             database: string;
+            log: string;
             book: object;
             theme: object;
             setting: object;
         }) {
-            const { database, book, theme, setting } = data;
+            const { database, log, book, theme, setting } = data;
 
             this.database = database;
+            this.log = log;
             this.book = book as {
                 info: string;
                 dir: string;
@@ -52,6 +55,7 @@ pinia.use(({ store }) => {
         if (store.$id === "config") {
             const newData = JSON.stringify({
                 database: store.database,
+                log: store.log,
                 book: store.book,
                 theme: store.theme,
                 setting: store.setting,

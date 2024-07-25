@@ -70,6 +70,7 @@ fn config_check(path: &mut PathBuf) {
         };
 
         config.database = format!("{}\\data.sqlite", dir);
+        config.log = format!("{}\\logs", dir);
         config.book.info = format!("{}\\book_info.json", dir);
         config.book.dir = format!("{}\\book", dir);
         config.book.cover = format!("{}\\cover", dir);
@@ -124,11 +125,11 @@ fn database_check(path: &mut PathBuf) {
         if table_check(&conn, name) {
             println!("Table {} exist", name);
             continue;
-        } 
-        
+        }
+
         // TODO: 优化出现错误时处理方法
         conn.execute(sql, []).expect("Failed to create table");
-    }                       
+    }
 
     let _ = conn.close();
     path.pop();

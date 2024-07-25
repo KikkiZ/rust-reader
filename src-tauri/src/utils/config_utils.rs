@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Deserialize, Serialize, Clone, Default, PartialEq, Eq)]
 pub struct Config {
     pub database: String,
+    pub log: String,
     pub book: BookData,
     pub theme: Theme,
     pub setting: Setting,
