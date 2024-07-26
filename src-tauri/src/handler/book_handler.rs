@@ -5,6 +5,7 @@ use std::{
 };
 
 use epub::doc::EpubDoc;
+use log::error;
 use rusqlite::Error as SqlError;
 use serde_json::json;
 
@@ -36,7 +37,6 @@ use super::CURRENT_BOOK;
 pub fn book_detail(id: &str) -> String {
     let result;
 
-    // TODO: 重构方法
     match BookInfo::get_specific_info(id) {
         Ok(info) => {
             result = json!({
@@ -56,8 +56,7 @@ pub fn book_detail(id: &str) -> String {
                 "msg": msg,
             })
         }
-        Err(_) => {
-            // TODO: 处理错误
+        Err(err) => {
             let msg = Notification {
                 r#type: NotificationType::Err,
                 title: "Error".to_string(),
@@ -67,8 +66,9 @@ pub fn book_detail(id: &str) -> String {
             result = json!({
                 "exist": false,
                 "msg": msg,
-            })
-            // panic!("{}", err);
+            });
+
+            error!("查询数据时发生了错误: {:?}", err.sqlite_error_code().unwrap());
         }
     }
 
@@ -117,8 +117,10 @@ pub fn open_book(id: &str) -> String {
                 "msg": msg,
             });
         }
-        // TODO: 处理错误
-        Err(err) => panic!("{}", err),
+        Err(err) => {
+            error!("查询数据时发生了错误: {:?}", err.sqlite_error_code().unwrap());
+            panic!("{}", err);
+        }
     }
 
     json_to_string(&result)
@@ -183,7 +185,6 @@ fn save_cover(info: &BookInfo, book: &mut EpubDoc<BufReader<File>>) {
     path.push(cover_name);
 
     println!("{:?}", path);
-    // TODO: 新建文件错误, 需要手动处理错误, 否则会panic
     let mut file = File::create(path).unwrap();
     let _ = file.write_all(&cover);
 }

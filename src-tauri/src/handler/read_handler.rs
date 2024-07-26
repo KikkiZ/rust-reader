@@ -29,9 +29,6 @@ pub fn get_book_catalog() -> String {
                 });
             }
             None => {
-                // TODO:
-                // 1. Log error
-                // 2. 完善错误信息
                 let error = Notification {
                     r#type: NotificationType::Err,
                     title: "Error".to_string(),
@@ -83,9 +80,6 @@ pub fn prev_page() -> String {
                 }
             }
             None => {
-                // TODO:
-                // 1. Log error
-                // 2. 完善错误信息
                 let msg = Notification {
                     r#type: NotificationType::Err,
                     title: "Error".to_string(),
@@ -137,9 +131,6 @@ pub fn next_page() -> String {
                 }
             }
             None => {
-                // TODO:
-                // 1. Log error
-                // 2. 完善错误信息
                 let msg = Notification {
                     r#type: NotificationType::Err,
                     title: "Error".to_string(),
@@ -193,9 +184,6 @@ pub fn jump_to_chapter(chapter: usize) -> String {
                 }
             }
             None => {
-                // TODO:
-                // 1. Log error
-                // 2. 完善错误信息
                 let msg = Notification {
                     r#type: NotificationType::Err,
                     title: "Error".to_string(),

@@ -6,6 +6,7 @@ use std::{
     path::PathBuf,
 };
 
+use log::{error, info};
 use rusqlite::Connection;
 
 use crate::utils::config_utils::Config;
@@ -14,7 +15,6 @@ const DIR_LIST: [&str; 3] = ["book", "cover", "resources"];
 
 #[cfg(target_os = "windows")]
 fn data_dir() -> PathBuf {
-    // PathBuf::from(env::var("APPDATA").unwrap())
     let mut path = PathBuf::from(env::var("LOCALAPPDATA").unwrap());
     path.push("Reader");
 
@@ -38,7 +38,6 @@ pub fn resource_integrity_check() {
 
     // 检查相关文件完整性
     config_check(&mut dir);
-    book_info_check(&mut dir);
     database_check(&mut dir);
 }
 
@@ -47,20 +46,29 @@ fn dir_check(path: &mut PathBuf) {
         path.push(name);
 
         if !path.exists() {
-            println!("Create dir: {:?}", path);
-            create_dir_all(&path).unwrap();
+            info!("创建目录: {:?}", path);
+            create_dir_all(&path).unwrap_or_else(|err| {
+                error!("创建目录失败: {}", err);
+                panic!();
+            });
         }
 
         path.pop();
     }
+
+    info!("目录完整性检查通过");
 }
 
 fn config_check(path: &mut PathBuf) {
     path.push("config.yml");
 
     if !path.exists() {
-        println!("Create config.yml");
-        let mut file = File::create(&path).expect("Failed to create config.yml");
+        info!("创建配置文件 config.yml");
+        let mut file = File::create(&path).unwrap_or_else(|err| {
+            error!("创建配置文件失败: {}", err);
+            panic!();
+        });
+
         let mut config = Config::default();
         let dir = {
             let mut temp = path.clone();
@@ -77,21 +85,13 @@ fn config_check(path: &mut PathBuf) {
         config.book.resources = format!("{}\\resources", dir);
 
         file.write_all(serde_yml::to_string(&config).unwrap().as_bytes())
-            .expect("Something wrong with config.yml");
+            .unwrap_or_else(|err| {
+                error!("写入配置文件失败: {}", err);
+                panic!();
+            });
     }
 
-    path.pop();
-}
-
-fn book_info_check(path: &mut PathBuf) {
-    path.push("book_info.json");
-
-    if !path.exists() {
-        println!("Create book_info.json");
-        let mut file = File::create(&path).expect("Failed to create book_info.json");
-        let _ = file.write_all(r#"[]"#.as_bytes());
-    }
-
+    info!("配置文件完整性检查通过");
     path.pop();
 }
 
@@ -100,7 +100,10 @@ fn database_check(path: &mut PathBuf) {
 
     let conn = match Connection::open(&path) {
         Ok(conn) => conn,
-        Err(_) => panic!("Failed to create db.sqlite"),
+        Err(err) => {
+            error!("打开数据库失败: {}", err);
+            panic!();
+        }
     };
 
     let mut tables: HashMap<&str, &str> = HashMap::new();
@@ -123,14 +126,16 @@ fn database_check(path: &mut PathBuf) {
 
     for (name, sql) in tables {
         if table_check(&conn, name) {
-            println!("Table {} exist", name);
             continue;
         }
 
-        // TODO: 优化出现错误时处理方法
-        conn.execute(sql, []).expect("Failed to create table");
+        conn.execute(sql, []).unwrap_or_else(|err| {
+            error!("创建表 {} 失败: {}", name, err);
+            panic!();
+        });
     }
 
+    info!("数据库完整性检查通过");
     let _ = conn.close();
     path.pop();
 }

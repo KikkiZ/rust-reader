@@ -6,6 +6,7 @@ use std::{
 };
 
 use crypto_hash::{Algorithm, Hasher};
+use log::warn;
 use serde::Serialize;
 use tauri::{Manager, Runtime};
 use window_shadows::set_shadow;
@@ -44,8 +45,7 @@ where
     match serde_json::to_string(&data) {
         Ok(result) => result,
         Err(error) => {
-            // TODO: Log error
-            println!("{}", error);
+            warn!("解析 JSON 数据异常: {}", error);
             "".to_string()
         }
     }
