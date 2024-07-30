@@ -123,6 +123,20 @@ fn database_check(path: &mut PathBuf) {
                 last_open   INTEGER NOT NULL
             );",
     );
+    tables.insert(
+        "book_mark",
+        "CREATE TABLE book_mark (
+                book_id         TEXT,
+                mark_id         INTEGER PRIMARY KEY,
+                start_chapter   INTEGER NOT NULL,
+                start_paragraph INTEGER NOT NULL,
+                start_offset    INTEGER NOT NULL,
+                end_chapter     INTEGER NOT NULL,
+                end_paragraph   INTEGER NOT NULL,
+                end_offset      INTEGER NOT NULL,
+                create_time     INTEGER NOT NULL
+            );",
+    );
 
     for (name, sql) in tables {
         if table_check(&conn, name) {
