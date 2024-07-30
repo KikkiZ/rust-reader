@@ -145,8 +145,10 @@ impl BookInfo {
                             language, 
                             subject, 
                             description, 
-                            last_open) 
-                        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);";
+                            last_open
+                        ) VALUES (
+                            ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11
+                        );";
         let params = params![
             info.id,
             info.file_path.to_str().unwrap(),

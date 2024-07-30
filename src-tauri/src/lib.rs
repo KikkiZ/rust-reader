@@ -7,7 +7,7 @@ use flexi_logger::{
     TS_DASHES_BLANK_COLONS_DOT_BLANK,
 };
 use lazy_static::lazy_static;
-use log::{info, LevelFilter, Record};
+use log::{error, info, LevelFilter, Record};
 use rusqlite::Connection;
 
 use utils::config_utils::read_config;
@@ -23,9 +23,18 @@ const MAX_LOG_SIZE: u64 = 10 * 1024 * 1024;
 lazy_static! {
     static ref CONN: Mutex<Connection> = {
         let path = read_config().database;
-        println!("lazy init: {}", path);
-        let conn = Connection::open(path).unwrap();
-        Mutex::new(conn)
+        let conn = Connection::open(path);
+        match conn {
+            Ok(conn) => {
+                info!("数据库连接成功");
+                Mutex::new(conn)
+            }
+            Err(err) => {
+                error!("数据库连接失败: {}", err);
+                panic!();
+            }
+        }
+
     };
 }
 
