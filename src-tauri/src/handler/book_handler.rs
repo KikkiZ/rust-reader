@@ -5,7 +5,7 @@ use std::{
 };
 
 use epub::doc::EpubDoc;
-use log::error;
+use log::{error, warn};
 use rusqlite::Error as SqlError;
 use serde_json::json;
 
@@ -68,7 +68,10 @@ pub fn book_detail(id: &str) -> String {
                 "msg": msg,
             });
 
-            error!("查询数据时发生了错误: {:?}", err.sqlite_error_code().unwrap());
+            warn!(
+                "查询数据时发生了错误: {:?}",
+                err.sqlite_error_code().unwrap()
+            );
         }
     }
 
@@ -118,7 +121,10 @@ pub fn open_book(id: &str) -> String {
             });
         }
         Err(err) => {
-            error!("查询数据时发生了错误: {:?}", err.sqlite_error_code().unwrap());
+            error!(
+                "查询数据时发生了错误: {:?}",
+                err.sqlite_error_code().unwrap()
+            );
             panic!("{}", err);
         }
     }
