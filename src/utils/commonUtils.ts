@@ -21,4 +21,22 @@ function appendPath(src: string, path: string): string {
     }
 }
 
-export default appendPath;
+/**
+ * 生成随机字符串
+ *
+ * @param {number} length - 字符串长度
+ *
+ * @returns {string} - 生成的随机字符串
+ */
+function randomString(length: number): string {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    let result = "";
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    return result;
+}
+
+export { appendPath, randomString };

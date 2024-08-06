@@ -1,6 +1,6 @@
 import { convertFileSrc } from "@tauri-apps/api/tauri";
 
-import appendPath from "@/utils/commonUtils";
+import { appendPath } from "@/utils/commonUtils";
 
 // TODO: 将解析的内容进行重构
 // TODO: 完善样式解析
@@ -62,39 +62,38 @@ class Parser {
             if (node.nodeType === Node.ELEMENT_NODE) {
                 element = node as HTMLElement;
             }
-        
+
             let children = node.childNodes;
             if (children.length === 0 && element !== undefined) {
                 if (element.hasAttribute("src")) {
                     element = element as HTMLImageElement;
-        
+
                     let target = element.src.substring(7);
                     target = appendPath(this.resource_path, target);
-        
+
                     element.src = convertFileSrc(target);
                 } else if (element.hasAttribute("href")) {
                     element = element as HTMLAnchorElement;
-        
+
                     let target = element.href.substring(7);
                     target = appendPath(this.resource_path, target);
-        
+
                     element.href = convertFileSrc(target);
                 } else if (element.hasAttribute("xlink:href")) {
                     element = element as unknown as SVGImageElement;
-        
+
                     let target = element.href.baseVal.substring(7);
                     target = appendPath(this.resource_path, target);
-        
+
                     element.href.baseVal = convertFileSrc(target);
                 }
-        
+
                 return;
             }
-        
+
             for (const current of children) {
                 this.parse(current);
             }
-
         }
     }
 
@@ -139,8 +138,8 @@ class Parser {
                 node.setAttribute("id", count.toString());
                 if (!item.isBlock()) {
                     node.classList.add("block");
-                } 
-                
+                }
+
                 content?.appendChild(node);
                 count += 1;
             }); // 将解析结果转为 DOM
@@ -176,7 +175,6 @@ class Parser {
             this.traversal(current, depth + 1);
         }
     }
-
 }
 
 class ParsedNode {
