@@ -1,9 +1,10 @@
 use crate::entity::epub::Epub;
 
-pub mod book_handler;
-pub mod book_list_handler;
-pub mod config_handler;
-pub mod read_handler;
+mod book_handler;
+mod book_list_handler;
+mod bookmark_handler;
+mod config_handler;
+mod read_handler;
 
 pub fn get_handlers() -> impl Fn(tauri::Invoke) {
     tauri::generate_handler![
@@ -13,6 +14,9 @@ pub fn get_handlers() -> impl Fn(tauri::Invoke) {
         book_handler::search_book,
         book_handler::get_css,
         book_list_handler::book_list,
+        bookmark_handler::add_bookmark,
+        bookmark_handler::get_chapter_mark_list,
+        bookmark_handler::delete_mark,
         config_handler::get_config,
         config_handler::update_config,
         config_handler::get_resource_path,

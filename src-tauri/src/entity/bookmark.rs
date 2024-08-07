@@ -47,6 +47,12 @@ impl BookMark {
         self
     }
 
+    pub fn update(mut self) -> Self {
+        self.mark_id = BookMark::next_id();
+        self.create_time = time_stamp();
+        self
+    }
+
     pub fn is_legle(&self) -> bool {
         self.end_position.chapter >= self.start_position.chapter
             && self.end_position.paragraph >= self.start_position.paragraph

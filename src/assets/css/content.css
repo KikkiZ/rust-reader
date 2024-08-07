@@ -51,3 +51,27 @@
 .optimize-content .block {
     display: block;
 }
+
+.optimize-content .bookmark {
+    position: relative;
+    
+    background-color: rgba(105, 204, 237, 0.5);
+    padding: 0;
+    --display: none;
+}
+
+.optimize-content .bookmark:hover {
+    border-radius: 0;
+    --display: inline;
+}
+
+.optimize-content .bookmark .delete {
+    display: var(--display);
+
+    position: absolute;
+    font-size: 16px;
+    padding: 0 8px;
+    width: 50px;
+    height: var(--line-height);
+    line-height: var(--line-height);
+}
