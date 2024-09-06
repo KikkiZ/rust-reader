@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { ref } from "vue";
 
+import pinia from "@/store";
 import { notify } from "@/core/notifyService";
 import { BookMark } from "@/entity/bookMark";
 import { useAppStateStore } from "@/store/appStateStore";
@@ -71,7 +72,7 @@ class ZipperMap<K, V> {
 // 发送请求到后台, 从数据库中删除数据,
 // 将解析完成的数据替换当前内容, 重新执行书签逻辑
 
-const appStateStore = useAppStateStore();
+const appStateStore = useAppStateStore(pinia);
 
 const archiveContent = ref<HTMLElement>();
 const markId = new ZipperMap<number, string>();
