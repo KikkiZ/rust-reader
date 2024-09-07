@@ -2,45 +2,37 @@
     "build": {
         "beforeDevCommand": "npm run dev",
         "beforeBuildCommand": "npm run build",
-        "devPath": "http://localhost:1420",
-        "distDir": "../dist"
+        "frontendDist": "../dist",
+        "devUrl": "http://localhost:1420"
     },
-    "package": {
-        "productName": "rust-reader",
-        "version": "0.0.2"
+    "bundle": {
+        "active": true,
+        "targets": "all",
+        "icon": [
+            "icons/32x32.png",
+            "icons/128x128.png",
+            "icons/128x128@2x.png",
+            "icons/icon.icns",
+            "icons/icon.ico"
+        ]
     },
-    "tauri": {
-        "allowlist": {
-            "all": false,
-            "shell": {
-                "all": false,
-                "open": true
-            },
-            "window": {
-                "all": false,
-                "close": true,
-                "hide": true,
-                "show": true,
-                "maximize": true,
-                "minimize": true,
-                "unmaximize": true,
-                "unminimize": true,
-                "startDragging": true
-            },
-            "dialog": {
-                "all": true,
-                "open": true
-            },
-            "protocol": {
-                "all": false,
-                "asset": true,
-                "assetScope": {
+    "productName": "rust-reader",
+    "version": "0.0.2",
+    "identifier": "rs.reader",
+    "plugins": {},
+    "app": {
+        "security": {
+            "assetProtocol": {
+                "scope": {
                     "allow": [
                         "**"
                     ],
+                    "deny": [],
                     "requireLiteralLeadingDot": false
-                }
-            }
+                },
+                "enable": true
+            },
+            "csp": "default-src 'self'; img-src 'self' https://asset.localhost; asset: https://asset.localhost; connect-src ipc: http://ipc.localhost"
         },
         "windows": [
             {
@@ -52,21 +44,6 @@
                 "decorations": false,
                 "transparent": true
             }
-        ],
-        "security": {
-            "csp": "default-src 'self'; img-src 'self' https://asset.localhost; asset: https://asset.localhost"
-        },
-        "bundle": {
-            "active": true,
-            "targets": "all",
-            "identifier": "rs.reader",
-            "icon": [
-                "icons/32x32.png",
-                "icons/128x128.png",
-                "icons/128x128@2x.png",
-                "icons/icon.icns",
-                "icons/icon.ico"
-            ]
-        }
+        ]
     }
 }

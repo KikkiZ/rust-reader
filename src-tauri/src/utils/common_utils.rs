@@ -8,13 +8,6 @@ use std::{
 use crypto_hash::{Algorithm, Hasher};
 use log::warn;
 use serde::Serialize;
-use tauri::{Manager, Runtime};
-use window_shadows::set_shadow;
-
-pub fn set_window_shadow<R: Runtime>(app: &tauri::App<R>) {
-    let window = app.get_window("main_window").unwrap();
-    set_shadow(&window, true).expect("error while set window shadow");
-}
 
 pub fn hash(path: &PathBuf) -> String {
     let mut file = File::open(path).unwrap();

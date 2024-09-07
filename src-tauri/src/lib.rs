@@ -10,6 +10,7 @@ use lazy_static::lazy_static;
 use log::{error, info, LevelFilter, Record};
 use rusqlite::Connection;
 
+use handler::{book_handler, book_list_handler, bookmark_handler, config_handler, read_handler};
 use utils::config_utils::read_config;
 use utils::resource_utils::resource_integrity_check;
 
@@ -34,7 +35,6 @@ lazy_static! {
                 panic!();
             }
         }
-
     };
 }
 
@@ -82,4 +82,28 @@ fn formatter(w: &mut dyn Write, now: &mut DeferredNow, record: &Record) -> Resul
     )?;
 
     write!(w, "{}", &record.args())
+}
+
+pub fn run() {
+    tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![
+            book_handler::book_detail,
+            book_handler::open_book,
+            book_handler::update_new_book,
+            book_handler::search_book,
+            book_handler::get_css,
+            book_list_handler::book_list,
+            bookmark_handler::add_bookmark,
+            bookmark_handler::get_chapter_mark_list,
+            bookmark_handler::delete_mark,
+            config_handler::get_config,
+            config_handler::update_config,
+            config_handler::get_resource_path,
+            read_handler::prev_page,
+            read_handler::next_page,
+            read_handler::jump_to_chapter,
+            read_handler::get_book_catalog,
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }

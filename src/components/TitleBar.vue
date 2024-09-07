@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 
 import router from "@/router";
 import { useConfigStore } from "@/store/configStore";
 
 const configStore = useConfigStore();
+
+const appWindow = getCurrentWebviewWindow()
 </script>
 
 <template>
