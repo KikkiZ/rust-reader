@@ -2,9 +2,9 @@ use std::{
     env,
     fs::File,
     io::{Read, Write},
+    sync::LazyLock,
 };
 
-use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, Clone, Default, PartialEq, Eq)]
@@ -48,18 +48,15 @@ impl Default for Setting {
     }
 }
 
-lazy_static! {
-    #[derive(Debug)]
-    static ref CONFIG_PATH: String = {
-        if cfg!(target_os = "windows") {
-            format!("{}\\Reader\\config.yml", env::var("LOCALAPPDATA").unwrap())
-        } else if cfg!(target_os = "linux") {
-            format!("{}/.Reader/config.yml", env::var("HOME").unwrap())
-        } else {
-            panic!("unsupported platform")
-        }
-    };
-}
+static CONFIG_PATH: LazyLock<String> = LazyLock::new(|| {
+    if cfg!(target_os = "windows") {
+        format!("{}\\Reader\\config.yml", env::var("LOCALAPPDATA").unwrap())
+    } else if cfg!(target_os = "linux") {
+        format!("{}/.Reader/config.yml", env::var("HOME").unwrap())
+    } else {
+        panic!("unsupported platform")
+    }
+});
 
 pub fn read_config() -> Config {
     let mut file = File::open(CONFIG_PATH.as_str()).expect("Failed to open config file.");

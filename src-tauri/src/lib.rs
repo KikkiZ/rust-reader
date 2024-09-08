@@ -1,12 +1,11 @@
 use std::io::{Error, Write};
-use std::sync::Mutex;
+use std::sync::{LazyLock, Mutex};
 
 use ctor::ctor;
 use flexi_logger::{
     Age, Cleanup, Criterion, DeferredNow, FileSpec, LogSpecification, Logger, Naming, WriteMode,
     TS_DASHES_BLANK_COLONS_DOT_BLANK,
 };
-use lazy_static::lazy_static;
 use log::{error, info, LevelFilter, Record};
 use rusqlite::Connection;
 
@@ -21,22 +20,20 @@ pub mod utils;
 const MAX_LOG_AGE: Age = Age::Day;
 const MAX_LOG_SIZE: u64 = 10 * 1024 * 1024;
 
-lazy_static! {
-    static ref CONN: Mutex<Connection> = {
-        let path = read_config().database;
-        let conn = Connection::open(path);
-        match conn {
-            Ok(conn) => {
-                info!("数据库连接成功");
-                Mutex::new(conn)
-            }
-            Err(err) => {
-                error!("数据库连接失败: {}", err);
-                panic!();
-            }
+static CONN: LazyLock<Mutex<Connection>> = LazyLock::new(|| {
+    let path = read_config().database;
+    let conn = Connection::open(path);
+    match conn {
+        Ok(conn) => {
+            info!("数据库连接成功");
+            Mutex::new(conn)
         }
-    };
-}
+        Err(err) => {
+            error!("数据库连接失败: {}", err);
+            panic!();
+        }
+    }
+});
 
 // 初始化程序相关资源
 // 1. 检查资源完整性

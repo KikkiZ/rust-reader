@@ -3335,7 +3335,6 @@ dependencies = [
  "ctor",
  "epub",
  "flexi_logger",
- "lazy_static",
  "log",
  "mime",
  "rusqlite",

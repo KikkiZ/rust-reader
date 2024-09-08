@@ -26,7 +26,6 @@ epub = "2.1.2"
 scraper = "0.19.1"
 crypto-hash = "0.3.4"
 mime = "0.3.17"
-lazy_static = "1.5.0"
 rusqlite = { version = "0.32.0", features = ["bundled"] }
 log = "0.4.22"
 flexi_logger = "0.28.5"
