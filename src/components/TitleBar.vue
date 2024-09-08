@@ -164,7 +164,8 @@ const appWindow = getCurrentWebviewWindow()
     display: flex;
     justify-content: space-between;
 
-    padding: 2px;
+    padding: 3px;
+    padding-top: 2px;
     margin-bottom: calc(var(--gap) * -1);
     z-index: 9;
 }
