@@ -93,20 +93,25 @@ pub fn open_book(id: &str) -> String {
     let result;
 
     match BookInfo::get_specific_info(id) {
-        Ok(mut info) => unsafe {
+        Ok(mut info) => {
             let mut book = Epub::new(&info.file_path);
 
             info.last_open = time_stamp(); // 更新最后一次打开时间(time_stamp)
             book.info = info.clone(); // 同步bookinfo
-            CURRENT_BOOK = Some(book);
+            
+            {
+                // 需要在代码块中修改资源, 并在块结束时释放资源, 防止后续的死锁问题
+                let mut container = CURRENT_BOOK.lock().unwrap();
+                *container = Some(book);
+            }
 
             BookInfo::update_info(&info); // 保存更新后的信息
 
             result = json!({
                 "success": true,
-                "content": CURRENT_BOOK.as_mut().unwrap().get_current_page(),
+                "content": CURRENT_BOOK.lock().unwrap().as_mut().unwrap().get_current_page(),
             });
-        },
+        }
         // 查询不到指定数据
         Err(SqlError::QueryReturnedNoRows) => {
             let msg = Notification {
@@ -252,22 +257,20 @@ pub fn search_book(key: &str) {
 pub fn get_css() -> String {
     let result;
 
-    unsafe {
-        match CURRENT_BOOK.as_mut() {
-            Some(book) => {
-                let css_list = book.get_css();
+    match CURRENT_BOOK.lock().unwrap().as_mut() {
+        Some(book) => {
+            let css_list = book.get_css();
 
-                result = json!({
-                    "success": true,
-                    "css": css_list,
-                });
-            }
-            None => {
-                // TODO: 增加返回的信息
-                result = json!({
-                    "success": false,
-                });
-            }
+            result = json!({
+                "success": true,
+                "css": css_list,
+            });
+        }
+        None => {
+            // TODO: 增加返回的信息
+            result = json!({
+                "success": false,
+            });
         }
     }
 

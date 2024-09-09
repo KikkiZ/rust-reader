@@ -20,26 +20,24 @@ use super::CURRENT_BOOK;
 pub fn get_book_catalog() -> String {
     let result;
 
-    unsafe {
-        match CURRENT_BOOK.as_mut() {
-            Some(book) => {
-                result = json!({
-                    "success": true,
-                    "catalog": book.get_catalog(),
-                });
-            }
-            None => {
-                let error = Notification {
-                    r#type: NotificationType::Err,
-                    title: "Error".to_string(),
-                    msg: "Has not open any book".to_string(),
-                };
+    match CURRENT_BOOK.lock().unwrap().as_ref() {
+        Some(book) => {
+            result = json!({
+                "success": true,
+                "catalog": book.get_catalog(),
+            });
+        }
+        None => {
+            let error = Notification {
+                r#type: NotificationType::Err,
+                title: "Error".to_string(),
+                msg: "Has not open any book".to_string(),
+            };
 
-                result = json!({
-                    "success": false,
-                    "error": error,
-                });
-            }
+            result = json!({
+                "success": false,
+                "error": error,
+            });
         }
     }
 
@@ -58,39 +56,37 @@ pub fn get_book_catalog() -> String {
 pub fn prev_page() -> String {
     let result;
 
-    unsafe {
-        match CURRENT_BOOK.as_mut() {
-            Some(book) => {
-                if book.go_prev() {
-                    result = json!({
-                        "success": true,
-                        "content": book.get_current_page(),
-                    });
-                } else {
-                    let msg = Notification {
-                        r#type: NotificationType::Warn,
-                        title: "WARN".to_string(),
-                        msg: "No previous page".to_string(),
-                    };
-
-                    result = json!({
-                        "success": false,
-                        "msg": msg,
-                    });
-                }
-            }
-            None => {
+    match CURRENT_BOOK.lock().unwrap().as_mut() {
+        Some(book) => {
+            if book.go_prev() {
+                result = json!({
+                    "success": true,
+                    "content": book.get_current_page(),
+                });
+            } else {
                 let msg = Notification {
-                    r#type: NotificationType::Err,
-                    title: "Error".to_string(),
-                    msg: "Has not open any book".to_string(),
+                    r#type: NotificationType::Warn,
+                    title: "WARN".to_string(),
+                    msg: "No previous page".to_string(),
                 };
 
                 result = json!({
                     "success": false,
                     "msg": msg,
-                })
+                });
             }
+        }
+        None => {
+            let msg = Notification {
+                r#type: NotificationType::Err,
+                title: "Error".to_string(),
+                msg: "Has not open any book".to_string(),
+            };
+
+            result = json!({
+                "success": false,
+                "msg": msg,
+            })
         }
     }
 
@@ -109,32 +105,18 @@ pub fn prev_page() -> String {
 pub fn next_page() -> String {
     let result;
 
-    unsafe {
-        match CURRENT_BOOK.as_mut() {
-            Some(book) => {
-                if book.go_next() {
-                    result = json!({
-                        "success": true,
-                        "content": book.get_current_page(),
-                    });
-                } else {
-                    let msg = Notification {
-                        r#type: NotificationType::Warn,
-                        title: "WARN".to_string(),
-                        msg: "No next page".to_string(),
-                    };
-
-                    result = json!({
-                        "success": false,
-                        "msg": msg,
-                    });
-                }
-            }
-            None => {
+    match CURRENT_BOOK.lock().unwrap().as_mut() {
+        Some(book) => {
+            if book.go_next() {
+                result = json!({
+                    "success": true,
+                    "content": book.get_current_page(),
+                });
+            } else {
                 let msg = Notification {
-                    r#type: NotificationType::Err,
-                    title: "Error".to_string(),
-                    msg: "Has not open any book".to_string(),
+                    r#type: NotificationType::Warn,
+                    title: "WARN".to_string(),
+                    msg: "No next page".to_string(),
                 };
 
                 result = json!({
@@ -142,6 +124,18 @@ pub fn next_page() -> String {
                     "msg": msg,
                 });
             }
+        }
+        None => {
+            let msg = Notification {
+                r#type: NotificationType::Err,
+                title: "Error".to_string(),
+                msg: "Has not open any book".to_string(),
+            };
+
+            result = json!({
+                "success": false,
+                "msg": msg,
+            });
         }
     }
 
@@ -162,32 +156,18 @@ pub fn next_page() -> String {
 pub fn jump_to_chapter(chapter: usize) -> String {
     let result;
 
-    unsafe {
-        match CURRENT_BOOK.as_mut() {
-            Some(book) => {
-                if book.set_current_page(chapter) {
-                    result = json!({
-                        "success": true,
-                        "content": book.get_current_page(),
-                    });
-                } else {
-                    let msg = Notification {
-                        r#type: NotificationType::Warn,
-                        title: "WARN".to_string(),
-                        msg: "Page not found".to_string(),
-                    };
-
-                    result = json!({
-                        "success": false,
-                        "msg": msg,
-                    });
-                }
-            }
-            None => {
+    match CURRENT_BOOK.lock().unwrap().as_mut() {
+        Some(book) => {
+            if book.set_current_page(chapter) {
+                result = json!({
+                    "success": true,
+                    "content": book.get_current_page(),
+                });
+            } else {
                 let msg = Notification {
-                    r#type: NotificationType::Err,
-                    title: "Error".to_string(),
-                    msg: "Has not open any book".to_string(),
+                    r#type: NotificationType::Warn,
+                    title: "WARN".to_string(),
+                    msg: "Page not found".to_string(),
                 };
 
                 result = json!({
@@ -195,6 +175,18 @@ pub fn jump_to_chapter(chapter: usize) -> String {
                     "msg": msg,
                 });
             }
+        }
+        None => {
+            let msg = Notification {
+                r#type: NotificationType::Err,
+                title: "Error".to_string(),
+                msg: "Has not open any book".to_string(),
+            };
+
+            result = json!({
+                "success": false,
+                "msg": msg,
+            });
         }
     }
 
