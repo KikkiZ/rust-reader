@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-    <div id="main-panel">
+    <div id="main-panel" v-split>
         <div id="side">
             <RouterView name="side" />
         </div>

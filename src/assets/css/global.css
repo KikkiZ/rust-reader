@@ -144,7 +144,7 @@ button {
 #app {
     display: flex;
     flex-direction: column;
-    
+
     background: linear-gradient(180deg, #b0d5df, #63bbd0);
 }
 
@@ -152,7 +152,6 @@ button {
     padding: var(--gap);
     height: calc(100% - 32px - var(--gap));
     display: flex;
-    gap: var(--gap);
 }
 
 #side {
@@ -180,4 +179,33 @@ button {
     border-radius: 6px;
     background-color: white;
     padding: 64px 16px;
+}
+
+.split {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    --drag-button: none;
+}
+
+.split:hover {
+    --drag-button: block;
+}
+
+.horizontal {
+    height: 8px;
+    width: 100%;
+}
+
+.horizontal:hover {
+    cursor: url("@/assets/img/cursor-vert.png") 24 24, auto;
+}
+
+.vertical {
+    width: 8px;
+    height: 100%;
+}
+
+.vertical:hover {
+    cursor: url("@/assets/img/cursor-horz.png") 24 24, auto;
 }
