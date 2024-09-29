@@ -1,12 +1,12 @@
-import { convertFileSrc } from "@tauri-apps/api/core";
+import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 
 import { appendPath } from "@/utils/commonUtils";
 
-// TODO: 将解析的内容进行重构
 // TODO: 完善样式解析
 
 class Parser {
     private resource_path: string;
+    private css_names: string[] = [];
 
     private index: number = 0;
     private contents: ParsedNode[] = [];
@@ -21,6 +21,24 @@ class Parser {
     private async init() {
         console.log("init");
 
+        const result: string = await invoke("get_css");
+        const { success, css } = JSON.parse(result);
+
+        // 添加样式
+        if (success) {
+            this.css_names = Object.keys(css);
+
+            let head = document.head;
+            for (const key of this.css_names) {
+                let style_tag = document.createElement("style");
+
+                style_tag.id = key;
+                style_tag.innerHTML = css[key];
+
+                head.appendChild(style_tag);
+            }
+        }
+
         document.getElementById("content")!.classList.add("optimize-content");
         document.getElementById("main")!.style.padding = "8px";
     }
@@ -31,7 +49,6 @@ class Parser {
         this.index = 0;
         this.contents = [];
 
-        this.parse(); // 为了将原始的 DOM 中的图像链接转换为 tauri 的文件路径
         this.optimize();
     }
 
@@ -39,65 +56,20 @@ class Parser {
     public release() {
         console.log("release");
 
+        let head = document.head;
+        for (const key of this.css_names) {
+            let style_tag = document.getElementById(key);
+            if (style_tag) {
+                head.removeChild(style_tag);
+            }
+        }
+
         document.getElementById("main")!.style.padding = "";
         document
             .getElementById("content")!
             .classList.remove("optimize-content");
     }
 
-    // 解析为原始样式
-    private parse(): void;
-    private parse(node: HTMLElement | ChildNode): void;
-    private parse(node?: HTMLElement | ChildNode) {
-        if (node === undefined) {
-            let contents = document.getElementById("content")?.children;
-
-            if (contents === undefined) return;
-
-            for (const content of contents) {
-                this.parse(content);
-            }
-        } else {
-            let element;
-            if (node.nodeType === Node.ELEMENT_NODE) {
-                element = node as HTMLElement;
-            }
-
-            let children = node.childNodes;
-            if (children.length === 0 && element !== undefined) {
-                if (element.hasAttribute("src")) {
-                    element = element as HTMLImageElement;
-
-                    let target = element.src.substring(7);
-                    target = appendPath(this.resource_path, target);
-
-                    element.src = convertFileSrc(target);
-                } else if (element.hasAttribute("href")) {
-                    element = element as HTMLAnchorElement;
-
-                    let target = element.href.substring(7);
-                    target = appendPath(this.resource_path, target);
-
-                    element.href = convertFileSrc(target);
-                } else if (element.hasAttribute("xlink:href")) {
-                    element = element as unknown as SVGImageElement;
-
-                    let target = element.href.baseVal.substring(7);
-                    target = appendPath(this.resource_path, target);
-
-                    element.href.baseVal = convertFileSrc(target);
-                }
-
-                return;
-            }
-
-            for (const current of children) {
-                this.parse(current);
-            }
-        }
-    }
-
-    // TODO: 优化模式
     private optimize() {
         const content = document.getElementById("content");
         const contents = content?.children;
@@ -134,7 +106,7 @@ class Parser {
 
                 // TODO: 添加样式
                 const node = document.createElement(item.type);
-                node.textContent = item.content;
+                node.innerHTML = item.content;
                 node.setAttribute("id", count.toString());
                 if (!item.isBlock()) {
                     node.classList.add("block");
@@ -172,7 +144,74 @@ class Parser {
                 }
             }
 
+            if (
+                this.isImageNode(current as HTMLElement) &&
+                this.contents[this.index]
+            ) {
+                this.convertSrcLink(current as HTMLElement);
+                const imageNode = (current as HTMLElement).outerHTML;
+                this.contents[this.index].append(imageNode);
+            }
+
             this.traversal(current, depth + 1);
+        }
+    }
+
+    private isImageNode(node: HTMLElement): boolean {
+        if (node === undefined || node === null) return false;
+        if (!(node instanceof HTMLElement)) return false;
+        if (
+            !node.hasAttribute("src") &&
+            !node.hasAttribute("href") &&
+            !node.hasAttribute("xlink:href")
+        ) {
+            return false;
+        }
+
+        let target;
+        if (node.hasAttribute("src")) {
+            const ele = node as HTMLImageElement;
+            target = ele.src.substring(7);
+        } else if (node.hasAttribute("href")) {
+            const ele = node as HTMLAnchorElement;
+            target = ele.href.substring(7);
+        } else if (node.hasAttribute("xlink:href")) {
+            const ele = node as unknown as SVGImageElement;
+            target = ele.href.baseVal.substring(7);
+        } else {
+            return false;
+        }
+
+        const suffix = [".png", ".jpg", ".jpeg", ".gif"];
+        if (!suffix.some((item) => target.endsWith(item))) return false;
+
+        return true;
+    }
+
+    private convertSrcLink(node: HTMLElement) {
+        if (node.hasAttribute("src")) {
+            const element = node as HTMLImageElement;
+
+            let target = element.src.substring(7);
+            target = appendPath(this.resource_path, target);
+
+            element.src = convertFileSrc(target);
+            // 将 alt 属性转为 title 属性, 指针指向 img 标签时会显示详细内容
+            element.title = element.alt;
+        } else if (node.hasAttribute("href")) {
+            const element = node as HTMLAnchorElement;
+
+            let target = element.href.substring(7);
+            target = appendPath(this.resource_path, target);
+
+            element.href = convertFileSrc(target);
+        } else if (node.hasAttribute("xlink:href")) {
+            const element = node as unknown as SVGImageElement;
+
+            let target = element.href.baseVal.substring(7);
+            target = appendPath(this.resource_path, target);
+
+            element.href.baseVal = convertFileSrc(target);
         }
     }
 }

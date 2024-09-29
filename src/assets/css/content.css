@@ -17,13 +17,13 @@
     src: url("@/assets/fonts/LXGWWenKaiGBScreen.ttf");
 }
 
-.optimize-content * {
+.optimize-content > * {
     margin: 0;
     padding: 6px;
     line-height: normal;
 }
 
-.optimize-content *:hover {
+.optimize-content > *:hover {
     background-color: rgba(0, 0, 0, 0.09);
     border-radius: 6px;
 }
@@ -54,7 +54,7 @@
 
 .optimize-content .bookmark {
     position: relative;
-    
+
     background-color: rgba(105, 204, 237, 0.5);
     padding: 0;
     --display: none;
